@@ -18,11 +18,6 @@ import resources
 FPS = 60
 FRAME_TIME = 1/FPS
 
-COLOR_BACKGROUND = 0
-COLOR_MAIN = 6
-COLOR_SECONDARY = 12
-COLOR_DARK = 1
-
 class GameState(Enum):
     Splash = 1,
     PressToStart = 2,
@@ -37,7 +32,7 @@ class Obj:
     target_y: int = 0
     time: float = 0
 
-    def __init__(self, color = COLOR_MAIN, slerp=False):
+    def __init__(self, color = resources.COLOR_MAIN, slerp=False):
         self.color = color
         self.slerp = slerp
 
@@ -60,9 +55,9 @@ def init():
     pyxel.init(160, 144, title="Game Name", fps=FPS, display_scale=3)
     pyxel.load("assets/my_resource.pyxres", image=True, tilemap=False, sound=True, music=True)
 
-    game.objects.append(Obj(slerp=True, color=COLOR_MAIN))
-    game.objects.append(Obj(color=COLOR_SECONDARY))
-    game.objects.append(Obj(color=COLOR_DARK))
+    game.objects.append(Obj(slerp=True, color=resources.COLOR_MAIN))
+    game.objects.append(Obj(color=resources.COLOR_SECONDARY))
+    game.objects.append(Obj(color=resources.COLOR_DARK))
 
     resources.play_music(resources.MUSIC_A)
 
@@ -73,7 +68,7 @@ def update():
         game.camera_y += 1
     if Controls.down(True):
         resources.play_sound(resources.SOUND_A)
-        pyxel.pal(COLOR_BACKGROUND, COLOR_MAIN)
+
     #if pyxel.btn(pyxel.KEY_Q):
         #pyxel.quit()
     if game.game_state == GameState.Splash:
@@ -112,7 +107,7 @@ def update():
 
 
 def draw():
-    pyxel.cls(COLOR_BACKGROUND)
+    pyxel.cls(resources.COLOR_BACKGROUND)
     if game.game_state == GameState.Splash:
         if game.splash_timer <= 1:
             y_pos = interp.interp(-144, 0, game.splash_timer, 1.0, easing=interp.EasingType.EaseOutBounce)
@@ -122,12 +117,17 @@ def draw():
     elif game.game_state == GameState.PressToStart:
         resources.blt_splash(0, 0)
         if game.press_to_start_timer < 0.8:
-            pyxel.rect(25, 115, 110, 15, COLOR_BACKGROUND)
-            pyxel.rectb(25, 115, 110, 15, COLOR_DARK)
-            pyxel.text(31, 121, "PRESS ANY BUTTON TO START", COLOR_DARK)
+            pyxel.rect(25, 115, 110, 15, resources.COLOR_BACKGROUND)
+            pyxel.rectb(25, 115, 110, 15, resources.COLOR_DARK)
+            pyxel.text(31, 121, "PRESS ANY BUTTON TO START", resources.COLOR_DARK)
     elif game.game_state == GameState.Game:
+        i = 0
         for obj in game.objects:
+            for obj2 in game.objects:
+                if obj is not obj2 and collision(obj.pos_x, obj.pos_y, obj2.pos_x, obj2.pos_y):
+                    resources.flip_colors()
             resources.blt_sprite(resources.SPRITE_D, obj.pos_x, obj.pos_y)
+            resources.reset_color()
 
 
 init()
