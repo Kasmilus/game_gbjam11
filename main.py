@@ -73,28 +73,57 @@ def update():
         #
         # Game Logic updates
         #
-        for obj in game.objects:
+        destroy_list = []
+        for obj_idx, obj in enumerate(game.objects):
             if obj.obj_type == ObjType.PlayerHook:
-                assert obj.hook_velocity is not None
-                obj.pos_x += obj.hook_velocity[0] * FRAME_TIME
-                obj.pos_y += obj.hook_velocity[1] * FRAME_TIME
-                hook_drag = obj.hook_drag*FRAME_TIME
+                destroy_hook = False
+                if obj.hook_moving_back == False:
+                    assert obj.hook_velocity is not None
+                    obj.pos_x += obj.hook_velocity[0] * FRAME_TIME
+                    obj.pos_y += obj.hook_velocity[1] * FRAME_TIME
+                    hook_drag = obj.hook_drag * FRAME_TIME
 
-                # TODO: Never allow it to go below certain speed?
-                obj.hook_velocity = (obj.hook_velocity[0] - sign(obj.hook_velocity[0])*hook_drag,
-                                     obj.hook_velocity[1] - sign(obj.hook_velocity[1])*hook_drag)
-                # TODO: Check if there's collision on line player<->hook
-                #       if so, destroy connection, blink the ball and then return it to the player
-                for obj2 in game.objects:
-                    if obj2.obj_type is ObjType.Player:
-                        continue
-                    if game_object.collision_obj(obj, obj2):
-                        obj.hook_velocity = (obj.hook_velocity[0]-obj.hook_velocity[0]*1.5*FRAME_TIME,
-                                             obj.hook_velocity[1]-obj.hook_velocity[1]*1.5*FRAME_TIME)
-                        if obj.hook_velocity[0] < 5:
-                            obj.hook_velocity = (0, obj.hook_velocity[1])
-                        if obj.hook_velocity[1] < 5:
-                            obj.hook_velocity = (obj.hook_velocity[0], 0)
+                    # TODO: Never allow it to go below certain speed?
+                    obj.hook_velocity = (obj.hook_velocity[0] - sign(obj.hook_velocity[0]) * hook_drag,
+                                         obj.hook_velocity[1] - sign(obj.hook_velocity[1]) * hook_drag)
+                    for obj2 in game.objects:
+                        if obj2.obj_type is ObjType.Player or obj2 is obj:
+                            continue
+                        if game_object.collision_obj(obj, obj2):
+                            obj.hook_velocity = (obj.hook_velocity[0]-obj.hook_velocity[0]*2.0*FRAME_TIME,
+                                                 obj.hook_velocity[1]-obj.hook_velocity[1]*2.0*FRAME_TIME)
+                            if obj.hook_velocity[0] < 5:
+                                obj.hook_velocity = (0, obj.hook_velocity[1])
+                            if obj.hook_velocity[1] < 5:
+                                obj.hook_velocity = (obj.hook_velocity[0], 0)
+                            if obj.hook_velocity == (0, 0):
+                                obj.hook_moving_back = True
+                        b_box = obj2.get_bbox_world_space()
+                        if game_object.get_line_bb_intersection_point(obj.get_pos_mid(), game.player_obj.get_pos_mid(), b_box):
+                            destroy_hook = True
+                else:
+                    # already stopped, move back
+                    if obj.hook_move_back_speed > 48:
+                        obj.hook_move_back_speed -= 10 * FRAME_TIME
+                    hook_move_dir = (game.player_obj.pos_x - obj.pos_x,
+                                     game.player_obj.pos_y - obj.pos_y)
+                    hook_move_dir = get_vector_normalised(hook_move_dir)
+                    obj.pos_x += hook_move_dir[0] * obj.hook_move_back_speed * FRAME_TIME
+                    obj.pos_y += hook_move_dir[1] * obj.hook_move_back_speed * FRAME_TIME
+                    for obj2 in game.objects:
+                        if obj2.obj_type == ObjType.PlayerHook:
+                            continue
+                        if game_object.collision_obj(obj, obj2):
+                            destroy_hook = True
+                        b_box = obj2.get_bbox_world_space()
+                        if game_object.get_line_bb_intersection_point(obj.get_pos_mid(), game.player_obj.get_pos_mid(), b_box):
+                            if obj2 is game.player_obj:
+                                continue
+                            destroy_hook = True
+                if destroy_hook:
+                    game.player_obj.player_available_hooks += 1
+                    assert game.player_obj.player_available_hooks <= game.player_obj.player_max_hooks
+                    destroy_list.append(obj_idx)
 
             if obj.obj_type == ObjType.Player:
                 if obj.player_dash_timer <= 0.0:
@@ -118,11 +147,9 @@ def update():
                 # Check if movement would result in collision
                 for obj2 in game.objects:
                     if obj2 is not obj and obj2.obj_type is not ObjType.PlayerHook:
-                        #if game_object.collision_bb(pos_x=obj.pos_x+move_dir[0], pos_y=obj.pos_y, posb_x=obj2.pos_x, posb_y=obj2.pos_y, size=obj.bounding_box[2]-obj.bounding_box[0]):
                         if game_object.collision_bb((obj.pos_x + move_dir[0], obj.pos_y), obj.bounding_box, obj2.get_pos(), obj2.bounding_box):
                             move_dir[0] = 0
                         if game_object.collision_bb((obj.pos_x, obj.pos_y + move_dir[1]), obj.bounding_box, obj2.get_pos(), obj2.bounding_box):
-                        #if collision(pos_x=obj.pos_x, pos_y=obj.pos_y+move_dir[1], posb_x=obj2.pos_x, posb_y=obj2.pos_y, size=obj.bounding_box[3]-obj.bounding_box[1]):
                             move_dir[1] = 0
 
                 if move_dir[0] != 0 and move_dir[1] != 0:
@@ -152,8 +179,11 @@ def update():
         #
         # Frame state reset
         #
+        for id in destroy_list:
+            game.objects.pop(id)
         for obj in game.objects:
             obj.collisions = []
+
 
 
 def draw():
@@ -178,6 +208,13 @@ def draw():
         for obj in game.objects:
             draw_list.append(obj)
         draw_list.sort(key=lambda x: x.draw_priority)
+
+        #pyxel.line(game.test_x, game.test_y, pyxel.mouse_x, pyxel.mouse_y, resources.COLOR_DARK)
+        #pyxel.line(game.test_x_start, game.test_y_start, game.test_x_end, game.test_x_end, resources.COLOR_DARK)
+        #point = game_object.get_line_intersection_point((game.test_x, game.test_y), (pyxel.mouse_x, pyxel.mouse_y),
+                                                   #(game.test_x_start, game.test_y_start), (game.test_x_end, game.test_x_end))
+        #if point is not None:
+            #pyxel.circ(point[0], point[1], 3, resources.COLOR_DARK)
 
         #
         # Render
