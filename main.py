@@ -11,7 +11,7 @@ from utils import *
 import interp
 from controls import Controls
 import resources
-from game_object import Obj, ObjType
+import game_object
 from game import *
 
 # pyxel run main.py
@@ -37,6 +37,9 @@ def init():
     create_room(room_layouts.ROOM_LAYOUT_TEST, (1, 0))
     game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_A, pos=get_pos_for_room((1, 5))))
     game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_B, pos=get_pos_for_room((2, 4))))
+
+    game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_A, pos=get_pos_for_room((4, 5))))
+    game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_B, pos=get_pos_for_room((6, 5))))
 
     # Enemies (spawn them on room enter if entering for the first time?)
     # TODO
@@ -74,7 +77,7 @@ def update():
         #
         for obj in game.objects:
             for obj2 in game.objects:
-                if obj is not obj2 and collision(obj.pos_x, obj.pos_y, obj2.pos_x, obj2.pos_y):
+                if obj is not obj2 and game_object.collision_obj(obj, obj2):
                     obj.collisions.append(obj2)
         #
         # Game Logic updates
@@ -102,9 +105,11 @@ def update():
                 # Check if movement would result in collision
                 for obj2 in game.objects:
                     if obj2 is not obj:
-                        if collision(pos_x=obj.pos_x+move_dir[0], pos_y=obj.pos_y, posb_x=obj2.pos_x, posb_y=obj2.pos_y):
+                        #if game_object.collision_bb(pos_x=obj.pos_x+move_dir[0], pos_y=obj.pos_y, posb_x=obj2.pos_x, posb_y=obj2.pos_y, size=obj.bounding_box[2]-obj.bounding_box[0]):
+                        if game_object.collision_bb((obj.pos_x + move_dir[0], obj.pos_y), obj.bounding_box, obj2.get_pos(), obj2.bounding_box):
                             move_dir[0] = 0
-                        if collision(pos_x=obj.pos_x, pos_y=obj.pos_y+move_dir[1], posb_x=obj2.pos_x, posb_y=obj2.pos_y):
+                        if game_object.collision_bb((obj.pos_x, obj.pos_y + move_dir[1]), obj.bounding_box, obj2.get_pos(), obj2.bounding_box):
+                        #if collision(pos_x=obj.pos_x, pos_y=obj.pos_y+move_dir[1], posb_x=obj2.pos_x, posb_y=obj2.pos_y, size=obj.bounding_box[3]-obj.bounding_box[1]):
                             move_dir[1] = 0
 
                 if move_dir[0] != 0 and move_dir[1] != 0:
@@ -141,7 +146,18 @@ def draw():
             pyxel.rectb(25, 115, 110, 15, resources.COLOR_DARK)
             pyxel.text(31, 121, "PRESS ANY BUTTON TO START", resources.COLOR_DARK)
     elif game.game_state == GameState.Game:
+        #
+        # Sort draw list
+        #
+        draw_list = []
         for obj in game.objects:
+            draw_list.append(obj)
+        draw_list.sort(key=lambda x: x.draw_priority)
+
+        #
+        # Render
+        #
+        for obj in draw_list:
             resources.blt_sprite(obj.sprite, obj.pos_x, obj.pos_y)
 
 
