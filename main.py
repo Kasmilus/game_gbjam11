@@ -21,16 +21,14 @@ from game import *
 # pyxel app2exe Pyxel.pyxapp
 
 
-
-
-
-
 def init():
     pyxel.init(160, 144, title="Game Name", fps=FPS, display_scale=3)
     pyxel.load("assets/my_resource.pyxres", image=True, tilemap=False, sound=True, music=True)
 
     # Start with player to make sure it's updated before anything else
-    game.objects.append(Obj(ObjType.Player, sprite=resources.SPRITE_PLAYER, pos=get_pos_for_room(cell_pos=(5, 5))))
+    player_obj = Obj(ObjType.Player, sprite=resources.SPRITE_PLAYER, pos=get_pos_for_room(cell_pos=(5, 5)))
+    game.objects.append(player_obj)
+    game.player_obj = player_obj
 
     # Rooms
     create_room(room_layouts.ROOM_LAYOUT_TEST, (0, 0))
@@ -42,7 +40,7 @@ def init():
     game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_B, pos=get_pos_for_room((6, 5))))
 
     # Enemies (spawn them on room enter if entering for the first time?)
-    # TODO
+    game.objects.append(Obj(ObjType.Enemy, sprite=resources.SPRITE_ENEMY_A, pos=get_pos_for_room((5, 3))))
 
     resources.play_music(resources.MUSIC_A)
 
@@ -73,16 +71,31 @@ def update():
             game.press_to_start_timer = 0
     else:
         #
-        # Collision checks
-        #
-        for obj in game.objects:
-            for obj2 in game.objects:
-                if obj is not obj2 and game_object.collision_obj(obj, obj2):
-                    obj.collisions.append(obj2)
-        #
         # Game Logic updates
         #
         for obj in game.objects:
+            if obj.obj_type == ObjType.PlayerHook:
+                assert obj.hook_velocity is not None
+                obj.pos_x += obj.hook_velocity[0] * FRAME_TIME
+                obj.pos_y += obj.hook_velocity[1] * FRAME_TIME
+                hook_drag = obj.hook_drag*FRAME_TIME
+
+                # TODO: Never allow it to go below certain speed?
+                obj.hook_velocity = (obj.hook_velocity[0] - sign(obj.hook_velocity[0])*hook_drag,
+                                     obj.hook_velocity[1] - sign(obj.hook_velocity[1])*hook_drag)
+                # TODO: Check if there's collision on line player<->hook
+                #       if so, destroy connection, blink the ball and then return it to the player
+                for obj2 in game.objects:
+                    if obj2.obj_type is ObjType.Player:
+                        continue
+                    if game_object.collision_obj(obj, obj2):
+                        obj.hook_velocity = (obj.hook_velocity[0]-obj.hook_velocity[0]*1.5*FRAME_TIME,
+                                             obj.hook_velocity[1]-obj.hook_velocity[1]*1.5*FRAME_TIME)
+                        if obj.hook_velocity[0] < 5:
+                            obj.hook_velocity = (0, obj.hook_velocity[1])
+                        if obj.hook_velocity[1] < 5:
+                            obj.hook_velocity = (obj.hook_velocity[0], 0)
+
             if obj.obj_type == ObjType.Player:
                 if obj.player_dash_timer <= 0.0:
                     obj.player_speed = 0.8
@@ -104,7 +117,7 @@ def update():
                     move_dir[0] += obj.player_speed
                 # Check if movement would result in collision
                 for obj2 in game.objects:
-                    if obj2 is not obj:
+                    if obj2 is not obj and obj2.obj_type is not ObjType.PlayerHook:
                         #if game_object.collision_bb(pos_x=obj.pos_x+move_dir[0], pos_y=obj.pos_y, posb_x=obj2.pos_x, posb_y=obj2.pos_y, size=obj.bounding_box[2]-obj.bounding_box[0]):
                         if game_object.collision_bb((obj.pos_x + move_dir[0], obj.pos_y), obj.bounding_box, obj2.get_pos(), obj2.bounding_box):
                             move_dir[0] = 0
@@ -120,10 +133,22 @@ def update():
                 room_before_move = get_room_from_pos((obj.pos_x, obj.pos_y))
                 obj.pos_x += move_dir[0]
                 obj.pos_y += move_dir[1]
+                if move_dir != [0, 0]:
+                    obj.last_move_dir = move_dir
 
                 room_after_move = get_room_from_pos((obj.pos_x, obj.pos_y))
                 if room_after_move != room_before_move:
                     move_camera_to_new_room(room_after_move)
+
+                # Hook shot
+                if Controls.a(one=True):
+                    if obj.player_available_hooks > 0:
+                        obj.player_available_hooks -= 1
+                        start_pos_offset = 3
+                        hook_pos = (obj.pos_x + obj.last_move_dir[0]*start_pos_offset, obj.pos_y + obj.last_move_dir[1]*start_pos_offset)
+                        hook = Obj(ObjType.PlayerHook, sprite=resources.SPRITE_HOOK, pos=hook_pos)
+                        hook.hook_velocity = (obj.last_move_dir[0] * obj.player_hook_speed, obj.last_move_dir[1] * obj.player_hook_speed)
+                        game.objects.append(hook)
         #
         # Frame state reset
         #
@@ -159,7 +184,10 @@ def draw():
         #
         for obj in draw_list:
             resources.blt_sprite(obj.sprite, obj.pos_x, obj.pos_y)
-
+            if obj.obj_type == ObjType.PlayerHook:
+                pyxel.line(obj.pos_x + HALF_GRID_CELL, obj.pos_y + HALF_GRID_CELL,
+                           game.player_obj.pos_x + HALF_GRID_CELL, game.player_obj.pos_y + HALF_GRID_CELL,
+                           resources.COLOR_DARK)
 
 
 init()

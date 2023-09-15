@@ -26,6 +26,8 @@ class Game:
     camera_target_y: int = 0
     camera_move_timer: float = 0
 
+    player_obj: Obj = None  # Reference to the player
+
 
 
 game: Game = Game()

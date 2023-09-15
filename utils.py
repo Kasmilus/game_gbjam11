@@ -9,3 +9,5 @@ def clamp(val: float, a: float, b: float) -> float:
 def clamp01(val: float) -> float:
     return clamp(val, 0, 1)
 
+def sign(a):
+    return (a>0) - (a<0)
