@@ -42,6 +42,10 @@ class Obj:
 
         self.collisions: List[Obj] = []
 
+        # Player specific
+        self.player_speed = 0
+        self.player_dash_timer = 0
+
 class Game:
     game_state: GameState = GameState.Game
     #game_state: GameState = GameState.Splash
@@ -160,16 +164,40 @@ def update():
         #
         for obj in game.objects:
             if obj.obj_type == ObjType.Player:
-                room_before_move = get_room_from_pos((obj.pos_x, obj.pos_y))
-                player_speed = 0.8
+                if obj.player_dash_timer <= 0.0:
+                    obj.player_speed = 0.8
+                    if Controls.b(one=True):
+                        obj.player_dash_timer = 0.25
+                        obj.player_speed = 1.6
+                else:
+                    obj.player_dash_timer -= FRAME_TIME
+
+                # Check movement input dir
+                move_dir = [0, 0]
                 if Controls.down():
-                    obj.pos_y += player_speed
-                if Controls.up():
-                    obj.pos_y -= player_speed
+                    move_dir[1] += obj.player_speed
+                elif Controls.up():
+                    move_dir[1] -= obj.player_speed
                 if Controls.left():
-                    obj.pos_x -= player_speed
-                if Controls.right():
-                    obj.pos_x += player_speed
+                    move_dir[0] -= obj.player_speed
+                elif Controls.right():
+                    move_dir[0] += obj.player_speed
+                # Check if movement would result in collision
+                for obj2 in game.objects:
+                    if obj2 is not obj:
+                        if collision(pos_x=obj.pos_x+move_dir[0], pos_y=obj.pos_y, posb_x=obj2.pos_x, posb_y=obj2.pos_y):
+                            move_dir[0] = 0
+                        if collision(pos_x=obj.pos_x, pos_y=obj.pos_y+move_dir[1], posb_x=obj2.pos_x, posb_y=obj2.pos_y):
+                            move_dir[1] = 0
+
+                if move_dir[0] != 0 and move_dir[1] != 0:
+                    move_dir[0] /= 1.414  # Normalize
+                    move_dir[1] /= 1.414  # Normalize
+
+                # Update position
+                room_before_move = get_room_from_pos((obj.pos_x, obj.pos_y))
+                obj.pos_x += move_dir[0]
+                obj.pos_y += move_dir[1]
 
                 room_after_move = get_room_from_pos((obj.pos_x, obj.pos_y))
                 if room_after_move != room_before_move:
