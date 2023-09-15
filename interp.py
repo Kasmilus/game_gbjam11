@@ -86,4 +86,4 @@ def interp(a: int, b: int, t: float, time: float, easing: EasingType) -> int:
     d = easing_function.get(easing)(d)
 
     result = a*(1-d) + b*d
-    return int(result)
+    return round(result)

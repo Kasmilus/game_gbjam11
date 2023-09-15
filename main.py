@@ -1,13 +1,18 @@
 import math
-from typing import List, Tuple, TypedDict
+from typing import List, Tuple
 from enum import Enum
 
 import pyxel
 
+from constants import *
+from room import *
+import room_layouts
 from utils import *
 import interp
 from controls import Controls
 import resources
+from game_object import Obj, ObjType
+from game import *
 
 # pyxel run main.py
 # pyxel edit
@@ -15,89 +20,10 @@ import resources
 # pyxel app2html Pyxel.pyxapp
 # pyxel app2exe Pyxel.pyxapp
 
-FPS: int = 60
-FRAME_TIME: float = 1/FPS
-GRID_CELL_SIZE: int = 16
-ROOM_SIZE_X: int = 10
-ROOM_SIZE_Y: int = 9
-
-class GameState(Enum):
-    Splash = 1,
-    PressToStart = 2,
-    Game = 3
-
-class ObjType(Enum):
-    Undefined = 0
-    Player = 1
-    Enemy = 2
-    World = 3
 
 
-class Obj:
-    def __init__(self, obj_type: ObjType, sprite: Tuple[int, int], pos: Tuple[int, int]):
-        self.obj_type = obj_type
-        self.sprite = sprite
-        self.pos_x = pos[0]
-        self.pos_y = pos[1]
-
-        self.collisions: List[Obj] = []
-
-        # Player specific
-        self.player_speed = 0
-        self.player_dash_timer = 0
-
-class Game:
-    game_state: GameState = GameState.Game
-    #game_state: GameState = GameState.Splash
-    objects: List[Obj] = []
-
-    splash_timer: float = 0
-    press_to_start_timer: float = 0
-
-    camera_x: int = 0
-    camera_y: int = 0
-    camera_target_x: int = 0
-    camera_target_y: int = 0
-    camera_move_timer: float = 0
-
-    def move_camera_to_new_room(self, room_coords: Tuple[int, int]) -> None:
-        self.camera_target_x, self.camera_target_y = get_pos_from_room_coords(room_coords)
-        self.camera_move_timer = 0
 
 
-game: Game = Game()
-
-
-def get_pos_for_room(cell_pos: Tuple[int, int], room_coords: Tuple[int, int] = None) -> Tuple[int, int]:
-    if room_coords is None:
-        room_coords = (0, 0)  # TODO: get current room
-    room_origin = get_pos_from_room_coords(room_coords)
-    return room_origin[0] + cell_pos[0] * GRID_CELL_SIZE, room_origin[1] + cell_pos[1] * GRID_CELL_SIZE
-
-
-def create_room(layout: str, room_coords: Tuple[int, int]) -> None:
-    lines = layout.splitlines()
-    assert len(lines) == ROOM_SIZE_Y
-    for cell_pos_y, line in enumerate(lines):
-        assert len(line) == ROOM_SIZE_X
-        for cell_pos_x, c in enumerate(line):
-            if c == '0':
-                continue
-            elif c == '1':
-                game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_A, pos=get_pos_for_room(cell_pos=(cell_pos_x, cell_pos_y), room_coords=room_coords)))
-            elif c == '2':
-                game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_B, pos=get_pos_for_room(cell_pos=(cell_pos_x, cell_pos_y), room_coords=room_coords)))
-            else:
-                raise Exception("Unknown cell type!")
-
-def get_room_from_pos(pos: Tuple[int, int]) -> Tuple[int, int]:
-    cell_coord = round(pos[0] / GRID_CELL_SIZE), round(pos[1] / GRID_CELL_SIZE)
-    room_coord = math.floor(cell_coord[0] / ROOM_SIZE_X), math.floor(cell_coord[1] / ROOM_SIZE_Y)
-    return room_coord
-
-def get_pos_from_room_coords(room_coords: Tuple[int, int]) -> Tuple[int, int]:
-    pos = room_coords[0] * ROOM_SIZE_X * GRID_CELL_SIZE, room_coords[1] * ROOM_SIZE_Y * GRID_CELL_SIZE
-    return pos
 
 def init():
     pyxel.init(160, 144, title="Game Name", fps=FPS, display_scale=3)
@@ -107,17 +33,8 @@ def init():
     game.objects.append(Obj(ObjType.Player, sprite=resources.SPRITE_PLAYER, pos=get_pos_for_room(cell_pos=(5, 5))))
 
     # Rooms
-    test_layout = "1111111111\n" \
-                  "1000000001\n" \
-                  "1000000001\n" \
-                  "1000000001\n" \
-                  "0000000000\n" \
-                  "1000000001\n" \
-                  "2000000001\n" \
-                  "2000000001\n" \
-                  "1112011111"
-    create_room(test_layout, (0, 0))
-    create_room(test_layout, (1, 0))
+    create_room(room_layouts.ROOM_LAYOUT_TEST, (0, 0))
+    create_room(room_layouts.ROOM_LAYOUT_TEST, (1, 0))
     game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_A, pos=get_pos_for_room((1, 5))))
     game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_B, pos=get_pos_for_room((2, 4))))
 
@@ -201,7 +118,7 @@ def update():
 
                 room_after_move = get_room_from_pos((obj.pos_x, obj.pos_y))
                 if room_after_move != room_before_move:
-                    game.move_camera_to_new_room(room_after_move)
+                    move_camera_to_new_room(room_after_move)
         #
         # Frame state reset
         #
