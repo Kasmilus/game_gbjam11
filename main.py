@@ -34,12 +34,8 @@ def init():
 
     # Rooms
     create_room(room_layouts.ROOM_LAYOUT_TEST, (0, 0))
+    create_room(room_layouts.ROOM_DECOR_TEST, (0, 0))
     create_room(room_layouts.ROOM_LAYOUT_TEST, (1, 0))
-    game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_A, pos=get_pos_for_room((1, 5))))
-    game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_B, pos=get_pos_for_room((2, 4))))
-
-    game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_A, pos=get_pos_for_room((4, 5))))
-    game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_B, pos=get_pos_for_room((6, 5)), is_hookable=True))
 
     # Enemies (spawn them on room enter if entering for the first time?)
     game.objects.append(Obj(ObjType.Enemy, sprite=resources.SPRITE_ENEMY_A, pos=get_pos_for_room((5, 3)), is_hookable=True))
@@ -162,11 +158,12 @@ def draw():
             elif obj.obj_type == ObjType.Player:
                 obj_player.draw_player(obj)
             else:
-                resources.blt_sprite(obj.sprite, obj.pos_x, obj.pos_y)
+                resources.blt_sprite(obj.get_render_sprite(), obj.pos_x, obj.pos_y)
 
             if DEBUG_DRAW_COLLIDERS:
-                bbox = obj.get_bbox_world_space()
-                pyxel.rectb(bbox[0], bbox[1], bbox[2]-bbox[0], bbox[3]-bbox[1], 15)
+                if obj.collides:
+                    bbox = obj.get_bbox_world_space()
+                    pyxel.rectb(bbox[0], bbox[1], bbox[2]-bbox[0], bbox[3]-bbox[1], 15)
 
 
 init()

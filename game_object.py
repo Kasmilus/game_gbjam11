@@ -1,6 +1,8 @@
 from typing import List, Tuple, TypedDict, Optional
 from enum import Enum
 
+import pyxel
+
 from constants import *
 import utils
 
@@ -13,7 +15,7 @@ class ObjType(Enum):
 
 
 class Obj:
-    def __init__(self, obj_type: ObjType, sprite: Tuple[int, int], pos: Tuple[int, int], is_hookable: bool = False):
+    def __init__(self, obj_type: ObjType, sprite: Tuple[int, int], pos: Tuple[int, int], collides: bool = True, is_hookable: bool = False):
         self.obj_type = obj_type
         self.sprite = sprite
         self.pos_x = pos[0]
@@ -25,9 +27,11 @@ class Obj:
         self.is_hookable = is_hookable
         self.is_hooked = False
         self.is_pushable = False
+        self.collides = collides
 
         self.bounding_box = (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)
         self.draw_priority = 0  # The higher, the later it will be drawn (on top of others)
+        self.anim_speed = 18
 
         # Player specific
         if obj_type == ObjType.Player:
@@ -79,6 +83,12 @@ class Obj:
             y = tmp_bbox[1] + (tmp_bbox[3] - tmp_bbox[1])/2
         return self.pos_x + x, self.pos_y + y
 
+    def get_render_sprite(self) -> Tuple[int, int]:
+        render_sprite = self.sprite
+        if type(render_sprite) is list:
+            render_sprite = render_sprite[int(pyxel.frame_count / self.anim_speed) % len(render_sprite)]
+        return render_sprite
+
 
 def collision_bb(pos_a: Tuple[int, int], bb_a: Tuple[int, int, int, int], pos_b: Tuple[int, int], bb_b: Tuple[int, int, int, int]) -> bool:
     collides = pos_a[0] + bb_a[0] < pos_b[0] + bb_b[2] and \
@@ -87,9 +97,17 @@ def collision_bb(pos_a: Tuple[int, int], bb_a: Tuple[int, int, int, int], pos_b:
                pos_a[1] + bb_a[3] > pos_b[1] + bb_b[1]
     return collides
 
+def objs_can_collide(obj_a: Obj, obj_b: Obj) -> bool:
+    if obj_a is obj_b:
+        return False
+    if obj_a.collides is False:
+        return False
+    if obj_b.collides is False:
+        return False
+    return True
 
 def collision_obj(obj_a: Obj, obj_b: Obj) -> bool:
-    if obj_a is obj_b:
+    if not objs_can_collide(obj_a, obj_b):
         return False
     return collision_bb(obj_a.get_pos(), obj_a.bounding_box, obj_b.get_pos(), obj_b.bounding_box)
 
@@ -135,9 +153,12 @@ def get_dist_obj(obj_a: Obj, obj_b: Obj) -> float:
     return utils.get_vector_len((obj_b.pos_x - obj_a.pos_x, obj_b.pos_y - obj_a.pos_y))
 
 def check_obj_move_collision(obj_a: Obj, obj_b: Obj, move_dir: Tuple[int, int]) -> Tuple[int, int]:
+    if not objs_can_collide(obj_a, obj_b):
+        return move_dir
     move_dir = [move_dir[0], move_dir[1]]
     if collision_bb((obj_a.pos_x + move_dir[0], obj_a.pos_y), obj_a.bounding_box, obj_b.get_pos(), obj_b.bounding_box):
         move_dir[0] = 0
     if collision_bb((obj_a.pos_x, obj_a.pos_y + move_dir[1]), obj_a.bounding_box, obj_b.get_pos(), obj_b.bounding_box):
         move_dir[1] = 0
     return move_dir[0], move_dir[1]
+

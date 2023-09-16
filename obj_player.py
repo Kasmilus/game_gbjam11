@@ -49,10 +49,6 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
     for obj2 in game.objects:
         if obj2 is not obj and obj2.obj_type is not ObjType.PlayerHook:
             move_dir = game_object.check_obj_move_collision(obj, obj2, move_dir)
-            #if game_object.collision_bb((obj.pos_x + move_dir[0], obj.pos_y), obj.bounding_box, obj2.get_pos(), obj2.bounding_box):
-            #    move_dir[0] = 0
-            #if game_object.collision_bb((obj.pos_x, obj.pos_y + move_dir[1]), obj.bounding_box, obj2.get_pos(), obj2.bounding_box):
-            #    move_dir[1] = 0
 
     if move_dir[0] != 0 and move_dir[1] != 0:
         move_dir = move_dir[0] / 1.414, move_dir[1] / 1.414  # Normalize
@@ -69,7 +65,7 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
             obj.player_available_hooks -= 1
             start_pos_offset = 3
             hook_pos = (obj.pos_x + obj.last_move_dir[0] * start_pos_offset, obj.pos_y + obj.last_move_dir[1] * start_pos_offset)
-            hook = Obj(ObjType.PlayerHook, sprite=resources.SPRITE_HOOK, pos=hook_pos)
+            hook = Obj(ObjType.PlayerHook, sprite=resources.SPRITES_HOOK, pos=hook_pos)
             hook.hook_velocity = (obj.last_move_dir[0] * obj.player_hook_speed, obj.last_move_dir[1] * obj.player_hook_speed)
             hook.hook_move_back_speed = obj.player_hook_speed
             game.objects.append(hook)

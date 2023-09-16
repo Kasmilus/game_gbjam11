@@ -21,14 +21,43 @@ def create_room(layout: str, room_coords: Tuple[int, int]) -> None:
     for cell_pos_y, line in enumerate(lines):
         assert len(line) == ROOM_SIZE_X
         for cell_pos_x, c in enumerate(line):
+            pos = get_pos_for_room(cell_pos=(cell_pos_x, cell_pos_y), room_coords=room_coords)
+            new_obj = None
+
             if c == '0':
                 continue
             elif c == '1':
-                game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_A, pos=get_pos_for_room(cell_pos=(cell_pos_x, cell_pos_y), room_coords=room_coords)))
+                new_obj = Obj(ObjType.World, sprite=resources.SPRITE_WALL_CORNER_LU, pos=pos)
             elif c == '2':
-                game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_B, pos=get_pos_for_room(cell_pos=(cell_pos_x, cell_pos_y), room_coords=room_coords)))
+                new_obj = Obj(ObjType.World, sprite=resources.SPRITE_WALL_UP, pos=pos)
+            elif c == 'q':
+                new_obj = Obj(ObjType.World, sprite=resources.SPRITE_STONE_A, pos=pos, is_hookable=True)
+            elif c == 'w':
+                new_obj = Obj(ObjType.World, sprite=resources.SPRITE_STONE_B, pos=pos)
+            elif c == 'e':
+                new_obj = Obj(ObjType.World, sprite=resources.SPRITE_STONE_C, pos=pos)
+            elif c == 'r':
+                new_obj = Obj(ObjType.World, sprite=resources.SPRITE_STONE_D, pos=pos)
+            #
+            # Decor
+            #
+            elif c == 'Q':
+                new_obj = Obj(ObjType.World, sprite=resources.SPRITES_FLOWER_Q, pos=pos, collides=False)
+                new_obj.anim_speed = 35
+            elif c == 'W':
+                new_obj = Obj(ObjType.World, sprite=resources.SPRITES_FLOWER_W, pos=pos, collides=False)
+                new_obj.anim_speed = 32
+            elif c == 'E':
+                new_obj = Obj(ObjType.World, sprite=resources.SPRITES_FLOWER_E, pos=pos, collides=False)
+                new_obj.anim_speed = 38
+            elif c == 'R':
+                new_obj = Obj(ObjType.World, sprite=resources.SPRITES_FLOWER_R, pos=pos, collides=False)
+                new_obj.anim_speed = 30
             else:
                 raise Exception("Unknown cell type!")
+
+            assert type(new_obj) is Obj
+            game.objects.append(new_obj)
 
 def get_room_from_pos(pos: Tuple[int, int]) -> Tuple[int, int]:
     cell_coord = round(pos[0] / GRID_CELL_SIZE), round(pos[1] / GRID_CELL_SIZE)

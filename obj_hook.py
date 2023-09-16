@@ -96,4 +96,4 @@ def draw_hook(obj: Obj) -> None:
     pyxel.line(hook_point[0], hook_point[1],
                game.player_obj.pos_x + HALF_GRID_CELL, game.player_obj.pos_y + HALF_GRID_CELL,
                resources.COLOR_DARK)
-    resources.blt_sprite(obj.sprite, obj.pos_x, obj.pos_y)
+    resources.blt_sprite(obj.get_render_sprite(), obj.pos_x, obj.pos_y)
