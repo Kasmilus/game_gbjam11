@@ -12,6 +12,7 @@ class ObjType(Enum):
     Enemy = 2
     World = 3
     PlayerHook = 4
+    Decor = 5
 
 
 class Obj:
@@ -28,10 +29,12 @@ class Obj:
         self.is_hooked = False
         self.is_pushable = False
         self.collides = collides
+        self.last_input_frame = 0  # for anim
 
         self.bounding_box = (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)
         self.draw_priority = 0  # The higher, the later it will be drawn (on top of others)
         self.anim_speed = 18
+        self.last_facing_dir_anim = 1
 
         # Player specific
         if obj_type == ObjType.Player:
@@ -43,6 +46,7 @@ class Obj:
             self.player_max_hooks = 5
             self.player_available_hooks = self.player_max_hooks
             self.is_pushable = True
+            self.anim_speed = 90  # 1.5sec per frame
 
         # Hook
         if obj_type == ObjType.PlayerHook:
@@ -56,6 +60,14 @@ class Obj:
         if obj_type == ObjType.Enemy:
             self.draw_priority = 4
             self.bounding_box = (5, 3, GRID_CELL_SIZE-5, GRID_CELL_SIZE-1)
+
+        if obj_type == ObjType.Decor:
+            self.collides = False
+            self.draw_priority = 0
+
+        if obj_type == ObjType.World:
+            self.collides = True
+            self.draw_priority = 1
 
 
     def get_pos(self) -> Tuple[int, int]:
@@ -86,7 +98,7 @@ class Obj:
     def get_render_sprite(self) -> Tuple[int, int]:
         render_sprite = self.sprite
         if type(render_sprite) is list:
-            render_sprite = render_sprite[int(pyxel.frame_count / self.anim_speed) % len(render_sprite)]
+            render_sprite = render_sprite[int((pyxel.frame_count - self.last_input_frame) / self.anim_speed) % len(render_sprite)]
         return render_sprite
 
 

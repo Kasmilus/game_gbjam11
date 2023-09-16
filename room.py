@@ -4,7 +4,7 @@ from enum import Enum
 
 from game_object import Obj, ObjType
 from constants import *
-import resources
+from resources import ALL_OBJECTS
 from game import game
 
 
@@ -27,31 +27,56 @@ def create_room(layout: str, room_coords: Tuple[int, int]) -> None:
             if c == '0':
                 continue
             elif c == '1':
-                new_obj = Obj(ObjType.World, sprite=resources.SPRITE_WALL_CORNER_LU, pos=pos)
+                new_obj = Obj(**ALL_OBJECTS['WALL_CORNER_LU'], pos=pos)
             elif c == '2':
-                new_obj = Obj(ObjType.World, sprite=resources.SPRITE_WALL_UP, pos=pos)
+                new_obj = Obj(**ALL_OBJECTS['WALL_CORNER_RU'], pos=pos)
+            elif c == '3':
+                new_obj = Obj(**ALL_OBJECTS['WALL_CORNER_LD'], pos=pos)
+            elif c == '4':
+                new_obj = Obj(**ALL_OBJECTS['WALL_CORNER_RD'], pos=pos)
+            elif c == '5':
+                new_obj = Obj(**ALL_OBJECTS['WALL_UP'], pos=pos)
+            elif c == '6':
+                new_obj = Obj(**ALL_OBJECTS['WALL_DOWN'], pos=pos)
+            elif c == '7':
+                new_obj = Obj(**ALL_OBJECTS['WALL_LEFT'], pos=pos)
+            elif c == '8':
+                new_obj = Obj(**ALL_OBJECTS['WALL_RIGHT'], pos=pos)
+            elif c == 'z':
+                new_obj = Obj(**ALL_OBJECTS['WALL_OPENING_LEFT_TOP'], pos=pos)
+            elif c == 'x':
+                new_obj = Obj(**ALL_OBJECTS['WALL_OPENING_LEFT_BOTTOM'], pos=pos)
+            elif c == 'c':
+                new_obj = Obj(**ALL_OBJECTS['WALL_OPENING_RIGHT_TOP'], pos=pos)
+            elif c == 'v':
+                new_obj = Obj(**ALL_OBJECTS['WALL_OPENING_RIGHT_BOTTOM'], pos=pos)
+            elif c == 'b':
+                new_obj = Obj(**ALL_OBJECTS['WALL_OPENING_DOWN_LEFT'], pos=pos)
+            elif c == 'n':
+                new_obj = Obj(**ALL_OBJECTS['WALL_OPENING_DOWN_RIGHT'], pos=pos)
+
             elif c == 'q':
-                new_obj = Obj(ObjType.World, sprite=resources.SPRITE_STONE_A, pos=pos, is_hookable=True)
+                new_obj = Obj(**ALL_OBJECTS['STONE_A'], pos=pos)
             elif c == 'w':
-                new_obj = Obj(ObjType.World, sprite=resources.SPRITE_STONE_B, pos=pos)
+                new_obj = Obj(**ALL_OBJECTS['STONE_B'], pos=pos)
             elif c == 'e':
-                new_obj = Obj(ObjType.World, sprite=resources.SPRITE_STONE_C, pos=pos)
+                new_obj = Obj(**ALL_OBJECTS['STONE_C'], pos=pos)
             elif c == 'r':
-                new_obj = Obj(ObjType.World, sprite=resources.SPRITE_STONE_D, pos=pos)
+                new_obj = Obj(**ALL_OBJECTS['STONE_D'], pos=pos)
             #
             # Decor
             #
             elif c == 'Q':
-                new_obj = Obj(ObjType.World, sprite=resources.SPRITES_FLOWER_Q, pos=pos, collides=False)
+                new_obj = Obj(**ALL_OBJECTS['FLOWER_Q'], pos=pos)
                 new_obj.anim_speed = 35
             elif c == 'W':
-                new_obj = Obj(ObjType.World, sprite=resources.SPRITES_FLOWER_W, pos=pos, collides=False)
+                new_obj = Obj(**ALL_OBJECTS['FLOWER_W'], pos=pos)
                 new_obj.anim_speed = 32
             elif c == 'E':
-                new_obj = Obj(ObjType.World, sprite=resources.SPRITES_FLOWER_E, pos=pos, collides=False)
+                new_obj = Obj(**ALL_OBJECTS['FLOWER_E'], pos=pos)
                 new_obj.anim_speed = 38
             elif c == 'R':
-                new_obj = Obj(ObjType.World, sprite=resources.SPRITES_FLOWER_R, pos=pos, collides=False)
+                new_obj = Obj(**ALL_OBJECTS['FLOWER_R'], pos=pos)
                 new_obj.anim_speed = 30
             else:
                 raise Exception("Unknown cell type!")

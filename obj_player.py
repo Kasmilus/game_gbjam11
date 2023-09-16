@@ -58,6 +58,8 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
     obj.pos_y += move_dir[1]
     if move_dir != (0, 0):
         obj.last_move_dir = move_dir
+        if move_dir[0] != 0:
+            obj.last_facing_dir_anim = move_dir[0]
 
     # Hook shot
     if Controls.a(one=True):
@@ -65,10 +67,23 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
             obj.player_available_hooks -= 1
             start_pos_offset = 3
             hook_pos = (obj.pos_x + obj.last_move_dir[0] * start_pos_offset, obj.pos_y + obj.last_move_dir[1] * start_pos_offset)
-            hook = Obj(ObjType.PlayerHook, sprite=resources.SPRITES_HOOK, pos=hook_pos)
+            hook = Obj(**resources.ALL_OBJECTS['HOOK'], pos=hook_pos)
             hook.hook_velocity = (obj.last_move_dir[0] * obj.player_hook_speed, obj.last_move_dir[1] * obj.player_hook_speed)
             hook.hook_move_back_speed = obj.player_hook_speed
             game.objects.append(hook)
 
+    if Controls.any_dir(one=True) or Controls.b(one=True):
+        obj.last_input_frame = pyxel.frame_count
+        obj.anim_speed = resources.SPRITE_PLAYER_RUN_SPEED
+    if Controls.any_dir() or Controls.b(one=True):
+        obj.sprite = resources.SPRITE_PLAYER_RUN
+    else:
+        obj.sprite = resources.SPRITE_PLAYER_IDLE
+        obj.anim_speed = resources.SPRITE_PLAYER_IDLE_SPEED
+
+
 def draw_player(obj: Obj) -> None:
-    resources.blt_sprite(obj.sprite, obj.pos_x, obj.pos_y)
+    invert = False
+    if obj.last_facing_dir_anim < 0:
+        invert = True
+    resources.blt_sprite(obj.get_render_sprite(), obj.pos_x, obj.pos_y, invert=invert)

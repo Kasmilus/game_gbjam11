@@ -28,7 +28,7 @@ def init():
     pyxel.load("assets/my_resource.pyxres", image=True, tilemap=False, sound=True, music=True)
 
     # Start with player to make sure it's updated before anything else
-    player_obj = Obj(ObjType.Player, sprite=resources.SPRITE_PLAYER, pos=get_pos_for_room(cell_pos=(5, 5)))
+    player_obj = Obj(pos=get_pos_for_room(cell_pos=(5, 5)), **resources.ALL_OBJECTS['PLAYER'])
     game.objects.append(player_obj)
     game.player_obj = player_obj
 
@@ -38,7 +38,8 @@ def init():
     create_room(room_layouts.ROOM_LAYOUT_TEST, (1, 0))
 
     # Enemies (spawn them on room enter if entering for the first time?)
-    game.objects.append(Obj(ObjType.Enemy, sprite=resources.SPRITE_ENEMY_A, pos=get_pos_for_room((5, 3)), is_hookable=True))
+    game.objects.append(Obj(pos=get_pos_for_room((2, 2)), **resources.ALL_OBJECTS['ENEMY_A']))
+    game.objects.append(Obj(pos=get_pos_for_room((5, 3)), **resources.ALL_OBJECTS['ENEMY_B']))
 
     resources.play_music(resources.MUSIC_A)
 
@@ -95,11 +96,9 @@ def update():
                 obj_player.update_player(obj, destroy_list)
 
             if obj.velocity is not None and obj.velocity != (0, 0):
-                print(obj.velocity)
                 for obj2 in game.objects:
                     if obj2 is not obj and obj2.obj_type is not ObjType.PlayerHook:
                         obj.velocity = game_object.check_obj_move_collision(obj, obj2, obj.velocity)
-                        print("COL: " + str(obj.velocity))
                 obj.pos_x += obj.velocity[0] * FRAME_TIME
                 obj.pos_y += obj.velocity[1] * FRAME_TIME
                 obj.velocity = (obj.velocity[0] - sign(obj.velocity[0]) * obj.velocity_drag,
@@ -108,7 +107,6 @@ def update():
                     obj.velocity = 0, obj.velocity[1]
                 if abs(obj.velocity[1]) < 5:
                     obj.velocity = obj.velocity[0], 0
-                print("FINAL: " + str(obj.velocity))
         #
         # Frame state reset
         #
