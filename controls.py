@@ -48,3 +48,7 @@ class Controls:
     def any(one=True):
         return Controls.a(one) or Controls.b(one) or Controls.left(one) or Controls.right(one) or Controls.up(one) or Controls.down(one)
 
+    @staticmethod
+    def any_dir(one=False):
+        return Controls.left(one) or Controls.right(one) or Controls.up(one) or Controls.down(one)
+

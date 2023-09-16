@@ -19,8 +19,11 @@ class Obj:
         self.pos_x = pos[0]
         self.pos_y = pos[1]
         self.last_move_dir = (1, 0)  # Always start facing right
+        self.velocity = (0, 0)  # When launched by a hook
+        self.velocity_drag = 0.5
         self.hook_velocity = None  # hook only
         self.is_hookable = is_hookable
+        self.is_hooked = False
         self.is_pushable = False
 
         self.bounding_box = (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)
@@ -128,4 +131,13 @@ def get_line_bb_intersection_point(line_start: Tuple[float, float],line_end: Tup
     return None
 
 def get_dist_obj(obj_a: Obj, obj_b: Obj) -> float:
+    # TODO: Use bbox center?
     return utils.get_vector_len((obj_b.pos_x - obj_a.pos_x, obj_b.pos_y - obj_a.pos_y))
+
+def check_obj_move_collision(obj_a: Obj, obj_b: Obj, move_dir: Tuple[int, int]) -> Tuple[int, int]:
+    move_dir = [move_dir[0], move_dir[1]]
+    if collision_bb((obj_a.pos_x + move_dir[0], obj_a.pos_y), obj_a.bounding_box, obj_b.get_pos(), obj_b.bounding_box):
+        move_dir[0] = 0
+    if collision_bb((obj_a.pos_x, obj_a.pos_y + move_dir[1]), obj_a.bounding_box, obj_b.get_pos(), obj_b.bounding_box):
+        move_dir[1] = 0
+    return move_dir[0], move_dir[1]
