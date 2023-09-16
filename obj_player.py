@@ -33,6 +33,8 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
 
     # Don't allow control when hooked
     if obj.is_hooked:
+        obj.sprite = resources.SPRITE_PLAYER_ROLL
+        obj.anim_speed = resources.SPRITE_PLAYER_ROLL_SPEED
         return
 
     # Check movement input dir
@@ -72,11 +74,14 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
             hook.hook_move_back_speed = obj.player_hook_speed
             game.objects.append(hook)
 
-    if Controls.any_dir(one=True) or Controls.b(one=True):
+    if Controls.any_dir(one=True):
         obj.last_input_frame = pyxel.frame_count
         obj.anim_speed = resources.SPRITE_PLAYER_RUN_SPEED
-    if Controls.any_dir() or Controls.b(one=True):
+    if Controls.any_dir():
         obj.sprite = resources.SPRITE_PLAYER_RUN
+        if obj.player_dash_timer > 0:
+            obj.sprite = resources.SPRITE_PLAYER_ROLL
+            obj.anim_speed = resources.SPRITE_PLAYER_ROLL_SPEED
     else:
         obj.sprite = resources.SPRITE_PLAYER_IDLE
         obj.anim_speed = resources.SPRITE_PLAYER_IDLE_SPEED

@@ -63,21 +63,30 @@ def create_room(layout: str, room_coords: Tuple[int, int]) -> None:
                 new_obj = Obj(**ALL_OBJECTS['STONE_C'], pos=pos)
             elif c == 'r':
                 new_obj = Obj(**ALL_OBJECTS['STONE_D'], pos=pos)
+
+            elif c == 'A':
+                new_obj = Obj(**ALL_OBJECTS['CHECKPOINT'], pos=pos)
+            elif c == 'B':
+                new_obj = Obj(**ALL_OBJECTS['COIN'], pos=pos)
+            elif c == 'C':
+                new_obj = Obj(**ALL_OBJECTS['KEY'], pos=pos)
+            elif c == 'D':
+                new_obj = Obj(**ALL_OBJECTS['DOOR'], pos=pos)
             #
             # Decor
             #
             elif c == 'Q':
                 new_obj = Obj(**ALL_OBJECTS['FLOWER_Q'], pos=pos)
-                new_obj.anim_speed = 35
+                new_obj.anim_speed = 135
             elif c == 'W':
                 new_obj = Obj(**ALL_OBJECTS['FLOWER_W'], pos=pos)
-                new_obj.anim_speed = 32
+                new_obj.anim_speed = 132
             elif c == 'E':
                 new_obj = Obj(**ALL_OBJECTS['FLOWER_E'], pos=pos)
-                new_obj.anim_speed = 38
+                new_obj.anim_speed = 138
             elif c == 'R':
                 new_obj = Obj(**ALL_OBJECTS['FLOWER_R'], pos=pos)
-                new_obj.anim_speed = 30
+                new_obj.anim_speed = 150
             else:
                 raise Exception("Unknown cell type!")
 

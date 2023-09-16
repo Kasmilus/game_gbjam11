@@ -22,7 +22,7 @@ def update_hook(obj: Obj, destroy_list: List[Obj]) -> None:
         destroy_hook = True
     # First check if line collides
     for obj2 in game.objects:
-        if obj2.obj_type == ObjType.PlayerHook:
+        if obj2.obj_type == ObjType.PlayerHook or obj2.collides is False:
             continue
         if obj2.obj_type == ObjType.Player and obj.hook_attached_object is not None:
             if game_object.get_dist_obj(obj, obj2) < 3:
@@ -46,7 +46,7 @@ def update_hook(obj: Obj, destroy_list: List[Obj]) -> None:
         obj.hook_velocity = (obj.hook_velocity[0] - sign(obj.hook_velocity[0]) * hook_drag,
                              obj.hook_velocity[1] - sign(obj.hook_velocity[1]) * hook_drag)
         for obj2 in game.objects:
-            if obj2.obj_type is ObjType.Player or obj2 is obj:
+            if obj2.obj_type is ObjType.Player or obj2 is obj or not game_object.objs_can_collide(obj, obj2):
                 continue
             if game_object.collision_obj(obj, obj2):
                 # TODO: Anim slow down before coming back
@@ -70,7 +70,7 @@ def update_hook(obj: Obj, destroy_list: List[Obj]) -> None:
             obj.pos_y += move_vector[1]
         update_hooked_obj = True
         for obj2 in game.objects:
-            if obj2 is obj or obj2 is obj.hook_attached_object:
+            if obj2 is obj or obj2 is obj.hook_attached_object or not game_object.objs_can_collide(obj.hook_attached_object, obj2):
                 continue
             if game_object.collision_bb((obj.hook_attached_object.pos_x + move_vector[0], obj.hook_attached_object.pos_y + move_vector[1]), obj.hook_attached_object.bounding_box,
                                         obj2.get_pos(), obj2.bounding_box):

@@ -13,10 +13,15 @@ class ObjType(Enum):
     World = 3
     PlayerHook = 4
     Decor = 5
+    Coin = 6
+    Key = 7
+    Door = 8
+    Checkpoint = 9
 
 
 class Obj:
-    def __init__(self, obj_type: ObjType, sprite: Tuple[int, int], pos: Tuple[int, int], collides: bool = True, is_hookable: bool = False):
+    def __init__(self, obj_type: ObjType, sprite: Tuple[int, int], pos: Tuple[int, int], name:str = "Unknown", collides: bool = True, is_hookable: bool = False):
+        self.name = name
         self.obj_type = obj_type
         self.sprite = sprite
         self.pos_x = pos[0]
@@ -30,6 +35,7 @@ class Obj:
         self.is_pushable = False
         self.collides = collides
         self.last_input_frame = 0  # for anim
+        self.collided_during_hook = False
 
         self.bounding_box = (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)
         self.draw_priority = 0  # The higher, the later it will be drawn (on top of others)
@@ -47,6 +53,8 @@ class Obj:
             self.player_available_hooks = self.player_max_hooks
             self.is_pushable = True
             self.anim_speed = 90  # 1.5sec per frame
+            self.player_collected_coins = 0
+            self.player_collected_keys = 0
 
         # Hook
         if obj_type == ObjType.PlayerHook:
@@ -69,6 +77,20 @@ class Obj:
             self.collides = True
             self.draw_priority = 1
 
+        if obj_type == ObjType.Coin:
+            self.anim_speed = 12
+            self.collides = False
+
+        if obj_type == ObjType.Key:
+            self.anim_speed = 50
+            self.collides = False
+
+        if obj_type == ObjType.Checkpoint:
+            self.checkpoint_used = False
+
+    def __repr__(self):
+        pos = int(self.pos_x / GRID_CELL_SIZE), int(self.pos_y / GRID_CELL_SIZE)
+        return f"[OBJ] {self.name} ({pos[0]}, {pos[1]})"
 
     def get_pos(self) -> Tuple[int, int]:
         return self.pos_x, self.pos_y
@@ -165,6 +187,7 @@ def get_dist_obj(obj_a: Obj, obj_b: Obj) -> float:
     return utils.get_vector_len((obj_b.pos_x - obj_a.pos_x, obj_b.pos_y - obj_a.pos_y))
 
 def check_obj_move_collision(obj_a: Obj, obj_b: Obj, move_dir: Tuple[int, int]) -> Tuple[int, int]:
+    """ Note: you probably want to pass in normalised move_dir!"""
     if not objs_can_collide(obj_a, obj_b):
         return move_dir
     move_dir = [move_dir[0], move_dir[1]]
@@ -172,5 +195,6 @@ def check_obj_move_collision(obj_a: Obj, obj_b: Obj, move_dir: Tuple[int, int]) 
         move_dir[0] = 0
     if collision_bb((obj_a.pos_x, obj_a.pos_y + move_dir[1]), obj_a.bounding_box, obj_b.get_pos(), obj_b.bounding_box):
         move_dir[1] = 0
+
     return move_dir[0], move_dir[1]
 

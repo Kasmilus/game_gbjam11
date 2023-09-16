@@ -5,16 +5,18 @@
 # zx - left opening, cv - right opening, bn - down opening (use up corners for up opening)
 # qwer - stones (q hookable)
 
+# A - checkpoint, B - coin, C - key, D - door
+
 # Decor:
 # QWER - flowers
 
-ROOM_LAYOUT_TEST = "1555555552\n" \
-                   "7000000q08\n" \
+ROOM_LAYOUT_TEST = "15555D5552\n" \
+                   "7C00000qB8\n" \
                    "7000000w08\n" \
                    "7000000008\n" \
                    "z00000000c\n" \
-                   "0000000000\n" \
-                   "x0000000rv\n" \
+                   "0B00000000\n" \
+                   "xA000000rv\n" \
                    "700e000008\n" \
                    "366b0n6664"
 ROOM_DECOR_TEST =  "0000000000\n" \

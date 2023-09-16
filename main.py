@@ -7,7 +7,7 @@ import pyxel
 from constants import *
 from room import *
 import room_layouts
-from utils import *
+import utils
 import interp
 from controls import Controls
 import resources
@@ -94,19 +94,45 @@ def update():
                 obj_hook.update_hook(obj, destroy_list)
             elif obj.obj_type == ObjType.Player:
                 obj_player.update_player(obj, destroy_list)
+            elif obj.obj_type == ObjType.Enemy:
+                if obj.collided_during_hook is True:
+                    # TODO: Explode, kill player
+                    destroy_list.append(obj)
+            elif obj.obj_type == ObjType.Coin:
+                # TODO: Add visible count on screen
+                if game_object.get_dist_obj(obj, game.player_obj) < GRID_CELL_SIZE:
+                    game.player_obj.player_collected_coins += 1
+                    destroy_list.append(obj)
+            elif obj.obj_type == ObjType.Key:
+                # TODO: Add visible count on screen
+                if game_object.get_dist_obj(obj, game.player_obj) < GRID_CELL_SIZE:
+                    game.player_obj.player_collected_keys += 1
+                    destroy_list.append(obj)
+            elif obj.obj_type == ObjType.Checkpoint:
+                if not obj.checkpoint_used:
+                    if game_object.get_dist_obj(obj, game.player_obj) < GRID_CELL_SIZE + 2:
+                        # TODO: Save game state!
+                        obj.checkpoint_used = True
+                        obj.last_input_frame = pyxel.frame_count
 
             if obj.velocity is not None and obj.velocity != (0, 0):
+                vel_sign_x = utils.sign(obj.velocity[0])
+                vel_sign_y = utils.sign(obj.velocity[1])
                 for obj2 in game.objects:
                     if obj2 is not obj and obj2.obj_type is not ObjType.PlayerHook:
-                        obj.velocity = game_object.check_obj_move_collision(obj, obj2, obj.velocity)
+                        move_dir = game_object.check_obj_move_collision(obj, obj2, (vel_sign_x, vel_sign_y))
+                        if move_dir[0] != vel_sign_x or move_dir[1] != vel_sign_y:
+                            obj.velocity = (0, 0)
+                            obj.collided_during_hook = True
                 obj.pos_x += obj.velocity[0] * FRAME_TIME
                 obj.pos_y += obj.velocity[1] * FRAME_TIME
-                obj.velocity = (obj.velocity[0] - sign(obj.velocity[0]) * obj.velocity_drag,
-                                obj.velocity[1] - sign(obj.velocity[1]) * obj.velocity_drag)
-                if abs(obj.velocity[0]) < 5:
+                obj.velocity = (obj.velocity[0] - utils.sign(obj.velocity[0]) * obj.velocity_drag,
+                                obj.velocity[1] - utils.sign(obj.velocity[1]) * obj.velocity_drag)
+                if abs(obj.velocity[0]) < 8:
                     obj.velocity = 0, obj.velocity[1]
-                if abs(obj.velocity[1]) < 5:
+                if abs(obj.velocity[1]) < 8:
                     obj.velocity = obj.velocity[0], 0
+
         #
         # Frame state reset
         #
@@ -155,6 +181,14 @@ def draw():
                 obj_hook.draw_hook(obj)
             elif obj.obj_type == ObjType.Player:
                 obj_player.draw_player(obj)
+            elif obj.obj_type == ObjType.Checkpoint:
+                # Fire anim once only!
+                if obj.checkpoint_used is False:
+                    resources.blt_sprite(obj.sprite[0], obj.pos_x, obj.pos_y)
+                elif (pyxel.frame_count - obj.last_input_frame) >= (obj.anim_speed * len(obj.sprite)):
+                    resources.blt_sprite(obj.sprite[-1], obj.pos_x, obj.pos_y)
+                else:
+                    resources.blt_sprite(obj.get_render_sprite(), obj.pos_x, obj.pos_y)
             else:
                 resources.blt_sprite(obj.get_render_sprite(), obj.pos_x, obj.pos_y)
 
