@@ -37,10 +37,10 @@ def init():
     game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_B, pos=get_pos_for_room((2, 4))))
 
     game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_A, pos=get_pos_for_room((4, 5))))
-    game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_B, pos=get_pos_for_room((6, 5))))
+    game.objects.append(Obj(ObjType.World, sprite=resources.SPRITE_WALL_B, pos=get_pos_for_room((6, 5)), is_hookable=True))
 
     # Enemies (spawn them on room enter if entering for the first time?)
-    game.objects.append(Obj(ObjType.Enemy, sprite=resources.SPRITE_ENEMY_A, pos=get_pos_for_room((5, 3))))
+    game.objects.append(Obj(ObjType.Enemy, sprite=resources.SPRITE_ENEMY_A, pos=get_pos_for_room((5, 3)), is_hookable=True))
 
     resources.play_music(resources.MUSIC_A)
 
@@ -77,7 +77,23 @@ def update():
         for obj_idx, obj in enumerate(game.objects):
             if obj.obj_type == ObjType.PlayerHook:
                 destroy_hook = False
-                if obj.hook_moving_back == False:
+                # First check if line collides
+                for obj2 in game.objects:
+                    if obj2.obj_type == ObjType.PlayerHook:
+                        continue
+                    if obj2.obj_type == ObjType.Player and obj.hook_attached_object is not None:
+                        if game_object.get_dist_obj(obj, obj2) < 3:
+                            destroy_hook = True
+                            break
+                    b_box = obj2.get_bbox_world_space()
+                    # TODO: Should allow "wrapping" the line around an object... count to 2 secs and destroy if still in contact
+                    if game_object.get_line_bb_intersection_point(obj.get_hook_attach_point(game), game.player_obj.get_pos_mid(), b_box):
+                        if obj2.obj_type == ObjType.Player:
+                            continue
+                        destroy_hook = True
+                        break
+                # Move hook before attached
+                if obj.hook_attached_object is None:
                     assert obj.hook_velocity is not None
                     obj.pos_x += obj.hook_velocity[0] * FRAME_TIME
                     obj.pos_y += obj.hook_velocity[1] * FRAME_TIME
@@ -90,41 +106,56 @@ def update():
                         if obj2.obj_type is ObjType.Player or obj2 is obj:
                             continue
                         if game_object.collision_obj(obj, obj2):
-                            obj.hook_velocity = (obj.hook_velocity[0]-obj.hook_velocity[0]*2.0*FRAME_TIME,
-                                                 obj.hook_velocity[1]-obj.hook_velocity[1]*2.0*FRAME_TIME)
-                            if obj.hook_velocity[0] < 5:
-                                obj.hook_velocity = (0, obj.hook_velocity[1])
-                            if obj.hook_velocity[1] < 5:
-                                obj.hook_velocity = (obj.hook_velocity[0], 0)
-                            if obj.hook_velocity == (0, 0):
-                                obj.hook_moving_back = True
-                        b_box = obj2.get_bbox_world_space()
-                        if game_object.get_line_bb_intersection_point(obj.get_pos_mid(), game.player_obj.get_pos_mid(), b_box):
-                            destroy_hook = True
+                            # TODO: Anim slow down before coming back
+                            if obj2.is_hookable:
+                                obj.hook_attached_object = obj2
+                            else:
+                                obj.hook_attached_object = game.player_obj
                 else:
-                    # already stopped, move back
+                    # already attached, move back
                     if obj.hook_move_back_speed > 48:
                         obj.hook_move_back_speed -= 10 * FRAME_TIME
                     hook_move_dir = (game.player_obj.pos_x - obj.pos_x,
                                      game.player_obj.pos_y - obj.pos_y)
                     hook_move_dir = get_vector_normalised(hook_move_dir)
-                    obj.pos_x += hook_move_dir[0] * obj.hook_move_back_speed * FRAME_TIME
-                    obj.pos_y += hook_move_dir[1] * obj.hook_move_back_speed * FRAME_TIME
+                    move_vector = hook_move_dir[0] * obj.hook_move_back_speed * FRAME_TIME, hook_move_dir[1] * obj.hook_move_back_speed * FRAME_TIME
+                    if obj.hook_attached_object is game.player_obj:
+                        move_vector = -move_vector[0], -move_vector[1]
+                    else:
+                        obj.pos_x += move_vector[0]
+                        obj.pos_y += move_vector[1]
+                    update_hooked_obj = True
                     for obj2 in game.objects:
-                        if obj2.obj_type == ObjType.PlayerHook:
+                        if obj2 is obj or obj2 is obj.hook_attached_object:
                             continue
-                        if game_object.collision_obj(obj, obj2):
+                        if game_object.collision_bb((obj.hook_attached_object.pos_x + move_vector[0], obj.hook_attached_object.pos_y + move_vector[1]), obj.hook_attached_object.bounding_box, obj2.get_pos(), obj2.bounding_box):
+                            update_hooked_obj = False
                             destroy_hook = True
-                        b_box = obj2.get_bbox_world_space()
-                        if game_object.get_line_bb_intersection_point(obj.get_pos_mid(), game.player_obj.get_pos_mid(), b_box):
-                            if obj2 is game.player_obj:
-                                continue
-                            destroy_hook = True
+                            break
+                    if update_hooked_obj:
+                        obj.hook_attached_object.pos_x += move_vector[0]
+                        obj.hook_attached_object.pos_y += move_vector[1]
                 if destroy_hook:
                     game.player_obj.player_available_hooks += 1
                     assert game.player_obj.player_available_hooks <= game.player_obj.player_max_hooks
                     destroy_list.append(obj_idx)
 
+            if obj.is_pushable:
+                for obj2 in game.objects:
+                    if obj2 is not obj and obj2.obj_type is not ObjType.PlayerHook:
+                        if game_object.collision_obj(obj, obj2):
+                            # Collides! check if we can free ourselves by moving 1 or 2 pixels in any way
+                            move_dir = None
+                            for i in [1, 2]:
+                                if move_dir is not None:
+                                    break
+                                for dir in [(i, 0), (0, i), (-i, 0), (0, -i)]:
+                                    if not game_object.collision_bb((obj.pos_x + dir[0], obj.pos_y + dir[1]), obj.bounding_box, obj2.get_pos(), obj2.bounding_box):
+                                        move_dir = dir
+                                        break
+                            if move_dir:
+                                obj.pos_x += move_dir[0]
+                                obj.pos_y += move_dir[1]
             if obj.obj_type == ObjType.Player:
                 if obj.player_dash_timer <= 0.0:
                     obj.player_speed = 0.8
@@ -175,6 +206,7 @@ def update():
                         hook_pos = (obj.pos_x + obj.last_move_dir[0]*start_pos_offset, obj.pos_y + obj.last_move_dir[1]*start_pos_offset)
                         hook = Obj(ObjType.PlayerHook, sprite=resources.SPRITE_HOOK, pos=hook_pos)
                         hook.hook_velocity = (obj.last_move_dir[0] * obj.player_hook_speed, obj.last_move_dir[1] * obj.player_hook_speed)
+                        hook.hook_move_back_speed = obj.player_hook_speed
                         game.objects.append(hook)
         #
         # Frame state reset
@@ -222,7 +254,8 @@ def draw():
         for obj in draw_list:
             resources.blt_sprite(obj.sprite, obj.pos_x, obj.pos_y)
             if obj.obj_type == ObjType.PlayerHook:
-                pyxel.line(obj.pos_x + HALF_GRID_CELL, obj.pos_y + HALF_GRID_CELL,
+                hook_point = obj.get_hook_attach_point(game)
+                pyxel.line(hook_point[0], hook_point[1],
                            game.player_obj.pos_x + HALF_GRID_CELL, game.player_obj.pos_y + HALF_GRID_CELL,
                            resources.COLOR_DARK)
 

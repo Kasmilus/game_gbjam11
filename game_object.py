@@ -2,6 +2,7 @@ from typing import List, Tuple, TypedDict, Optional
 from enum import Enum
 
 from constants import *
+import utils
 
 class ObjType(Enum):
     Undefined = 0
@@ -12,13 +13,15 @@ class ObjType(Enum):
 
 
 class Obj:
-    def __init__(self, obj_type: ObjType, sprite: Tuple[int, int], pos: Tuple[int, int]):
+    def __init__(self, obj_type: ObjType, sprite: Tuple[int, int], pos: Tuple[int, int], is_hookable: bool = False):
         self.obj_type = obj_type
         self.sprite = sprite
         self.pos_x = pos[0]
         self.pos_y = pos[1]
         self.last_move_dir = (1, 0)  # Always start facing right
         self.hook_velocity = None  # hook only
+        self.is_hookable = is_hookable
+        self.is_pushable = False
 
         self.bounding_box = (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)
         self.draw_priority = 0  # The higher, the later it will be drawn (on top of others)
@@ -30,21 +33,23 @@ class Obj:
             self.player_speed = 0
             self.player_dash_timer = 0
             self.player_hook_speed = 76  # Pixels per sec
-            self.player_max_hooks = 1
-            self.player_available_hooks = 1
+            self.player_max_hooks = 5
+            self.player_available_hooks = self.player_max_hooks
+            self.is_pushable = True
 
         # Hook
         if obj_type == ObjType.PlayerHook:
             self.bounding_box = (6, 6, GRID_CELL_SIZE-6, GRID_CELL_SIZE-6)  # Smaller than sprite!
             self.draw_priority = 5
-            self.hook_drag = 1  # slowdown per sec
-            self.hook_moving_back = False
-            self.hook_move_back_speed = 90
+            self.hook_drag = 1.2  # slowdown per sec
+            self.hook_move_back_speed = None  # Set on create
+            self.hook_attached_object = None  # Set on contact
 
         # Enemies
         if obj_type == ObjType.Enemy:
             self.draw_priority = 4
             self.bounding_box = (5, 3, GRID_CELL_SIZE-5, GRID_CELL_SIZE-1)
+
 
     def get_pos(self) -> Tuple[int, int]:
         return self.pos_x, self.pos_y
@@ -52,6 +57,24 @@ class Obj:
         return self.pos_x + HALF_GRID_CELL, self.pos_y + HALF_GRID_CELL
     def get_bbox_world_space(self) -> Tuple[int, int, int, int]:
         return self.pos_x + self.bounding_box[0], self.pos_y + self.bounding_box[1], self.pos_x + self.bounding_box[2], self.pos_y + self.bounding_box[3]
+
+    def get_hook_attach_point(self, game) -> Tuple[int, int]:
+        x_dir = game.player_obj.pos_x - self.pos_x
+        y_dir = game.player_obj.pos_y - self.pos_y
+        tmp_bbox = self.bounding_box[0] - 1, self.bounding_box[1] - 1, self. bounding_box[2] + 1, self.bounding_box[3]
+        if x_dir < 0:
+            x = tmp_bbox[0]
+        elif x_dir > 0:
+            x = tmp_bbox[2]
+        else:
+            x = tmp_bbox[0] + (tmp_bbox[2] - tmp_bbox[0])/2
+        if y_dir < 0:
+            y = tmp_bbox[1]
+        elif y_dir > 0:
+            y = tmp_bbox[3]
+        else:
+            y = tmp_bbox[1] + (tmp_bbox[3] - tmp_bbox[1])/2
+        return self.pos_x + x, self.pos_y + y
 
 
 def collision_bb(pos_a: Tuple[int, int], bb_a: Tuple[int, int, int, int], pos_b: Tuple[int, int], bb_b: Tuple[int, int, int, int]) -> bool:
@@ -82,7 +105,6 @@ def get_line_intersection_point(line_a_start: Tuple[float, float],line_a_end: Tu
     u_a, u_b = _line_intersection_distance(line_a_start[0], line_a_start[1], line_a_end[0], line_a_end[1],
                                            line_b_start[0], line_b_start[1], line_b_end[0], line_b_end[1])
     if 0 <= u_a <= 1 and 0 <= u_b <= 1:
-        print("AAAAAAAAAA")
         intersection_x = line_a_start[0] + (u_a * (line_a_end[0]-line_a_start[0]))
         intersection_y = line_a_start[1] + (u_a * (line_a_end[1]-line_a_start[1]))
         return intersection_x, intersection_y
@@ -104,3 +126,6 @@ def get_line_bb_intersection_point(line_start: Tuple[float, float],line_end: Tup
         return d
 
     return None
+
+def get_dist_obj(obj_a: Obj, obj_b: Obj) -> float:
+    return utils.get_vector_len((obj_b.pos_x - obj_a.pos_x, obj_b.pos_y - obj_a.pos_y))
