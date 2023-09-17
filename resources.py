@@ -6,6 +6,13 @@ from game_object import ObjType
 
 IMAGE_SPLASH = 0
 IMAGE_SPRITES = 1
+IMAGE_UI = 2
+
+SPRITE_UI_BOX = (0, 0)
+SPRITE_UI_HOOK = (0, 2)
+SPRITE_UI_COIN = (0, 3)
+SPRITE_UI_KEY = (0, 4)
+SPRITE_UI_CKPT = (0, 5)
 
 SPRITE_SIZE = 16
 
@@ -109,7 +116,6 @@ def reset_color() -> None:
 
 def blt_sprite(spritesheet_pos: Tuple[int, int], x: int, y: int, transparent_color=0, invert: bool = False) -> None:
     size = SPRITE_SIZE
-    pos_add = 0
     if invert:
         size = -size
 
@@ -121,6 +127,11 @@ def blt_sprite(spritesheet_pos: Tuple[int, int], x: int, y: int, transparent_col
 def blt_splash(x: int, y: int) -> None:
     blt(0, y, IMAGE_SPLASH, 0, 0, 160, 144)
 
+
+def blt_ui_sprite(spritesheet_pos: Tuple[int, int], size: Tuple[int, int], x: int, y: int, transparent_color=0) -> None:
+    blt(x, y, IMAGE_UI,
+        SPRITE_SIZE*spritesheet_pos[0], SPRITE_SIZE*spritesheet_pos[1],
+        size[0], size[1], colkey=transparent_color)
 
 def play_music(music: int) -> None:
     # In-game music should leave channel 1 for sounds

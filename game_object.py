@@ -55,6 +55,7 @@ class Obj:
             self.anim_speed = 90  # 1.5sec per frame
             self.player_collected_coins = 0
             self.player_collected_keys = 0
+            self.player_last_checkpoint_name = "---"
 
         # Hook
         if obj_type == ObjType.PlayerHook:

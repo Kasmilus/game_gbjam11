@@ -110,10 +110,15 @@ def update():
                     destroy_list.append(obj)
             elif obj.obj_type == ObjType.Checkpoint:
                 if not obj.checkpoint_used:
-                    if game_object.get_dist_obj(obj, game.player_obj) < GRID_CELL_SIZE + 2:
+                    if game_object.get_dist_obj(obj, game.player_obj) < GRID_CELL_SIZE + HALF_GRID_CELL:
                         # TODO: Save game state!
                         obj.checkpoint_used = True
                         obj.last_input_frame = pyxel.frame_count
+                        ckpt_name = None
+                        if get_current_room() == (0, 0):
+                            ckpt_name = "ENTRANCE"
+                        assert ckpt_name is not None
+                        game.player_obj.player_last_checkpoint_name = ckpt_name
 
             if obj.velocity is not None and obj.velocity != (0, 0):
                 vel_sign_x = utils.sign(obj.velocity[0])
@@ -196,6 +201,39 @@ def draw():
                 if obj.collides:
                     bbox = obj.get_bbox_world_space()
                     pyxel.rectb(bbox[0], bbox[1], bbox[2]-bbox[0], bbox[3]-bbox[1], 15)
+
+        # Draw UI
+        pos_x = game.camera_x
+        pos_y = game.camera_y + ROOM_SIZE_Y*GRID_CELL_SIZE
+        resources.blt_ui_sprite(resources.SPRITE_UI_BOX, (GRID_CELL_SIZE*ROOM_SIZE_X, GRID_CELL_SIZE*2), pos_x, pos_y )
+
+        pos_y += HALF_GRID_CELL
+        pos_x += HALF_GRID_CELL/2
+        resources.blt_ui_sprite(resources.SPRITE_UI_HOOK, (GRID_CELL_SIZE*ROOM_SIZE_X, GRID_CELL_SIZE), pos_x, pos_y)
+
+        pos_x += GRID_CELL_SIZE
+        pyxel.text(pos_x-3, pos_y+5, f":{game.player_obj.player_available_hooks}", resources.COLOR_DARK)
+
+        pos_x += HALF_GRID_CELL
+        resources.blt_ui_sprite(resources.SPRITE_UI_KEY, (GRID_CELL_SIZE*ROOM_SIZE_X, GRID_CELL_SIZE), pos_x, pos_y-1)
+        pos_x += GRID_CELL_SIZE
+        pyxel.text(pos_x, pos_y+5, f":{game.player_obj.player_collected_keys}", resources.COLOR_DARK)
+
+        pos_x += HALF_GRID_CELL
+        resources.blt_ui_sprite(resources.SPRITE_UI_COIN, (GRID_CELL_SIZE*ROOM_SIZE_X, GRID_CELL_SIZE), pos_x, pos_y)
+        pos_x += GRID_CELL_SIZE
+        pyxel.text(pos_x-3, pos_y+5, f":{game.player_obj.player_collected_coins}", resources.COLOR_DARK)
+
+        pos_x += GRID_CELL_SIZE
+        resources.blt_ui_sprite(resources.SPRITE_UI_CKPT, (GRID_CELL_SIZE*ROOM_SIZE_X, GRID_CELL_SIZE), pos_x, pos_y)
+        #pos_x += GRID_CELL_SIZE + HALF_GRID_CELL + 1
+        pos_x += GRID_CELL_SIZE
+        #s = "1234567891234"
+        s = game.player_obj.player_last_checkpoint_name
+        # Center the text
+        pos_x += (13-len(s)) * 2  # Each char is 4 pixels wide (3 + spacing)
+        pyxel.text(pos_x, pos_y+6, s, resources.COLOR_DARK)
+
 
 
 init()
