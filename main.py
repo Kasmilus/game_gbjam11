@@ -15,6 +15,7 @@ import game_object
 from game import *
 import obj_hook
 import obj_player
+import obj_enemy
 
 # pyxel run main.py
 # pyxel edit
@@ -24,7 +25,7 @@ import obj_player
 
 
 def init():
-    pyxel.init(160, 144, title="Game Name", fps=FPS, display_scale=3)
+    pyxel.init(160, 144, title="The Fable of Helga", fps=FPS, display_scale=3)
     pyxel.load("assets/my_resource.pyxres", image=True, tilemap=False, sound=True, music=True)
 
     # Start with player to make sure it's updated before anything else
@@ -33,18 +34,23 @@ def init():
     game.player_obj = player_obj
 
     # Rooms
-    create_room(room_layouts.ROOM_LAYOUT_TEST, (0, 0))
-    create_room(room_layouts.ROOM_DECOR_TEST, (0, 0))
-    create_room(room_layouts.ROOM_LAYOUT_TEST, (1, 0))
+    for level in room_layouts.ALL_LEVELS:
+        room_name = level[0]
+        room_pos = level[1]
+        layouts = level[2]
+        for layout in layouts:
+            create_room(layout, room_pos, room_name)
 
-    # Enemies (spawn them on room enter if entering for the first time?)
-    game.objects.append(Obj(pos=get_pos_for_room((2, 2)), **resources.ALL_OBJECTS['ENEMY_A']))
-    game.objects.append(Obj(pos=get_pos_for_room((5, 3)), **resources.ALL_OBJECTS['ENEMY_B']))
+    #create_room(room_layouts.ROOM_LAYOUT_TEST, (0, 0))
+    #create_room(room_layouts.ROOM_DECOR_TEST, (0, 0))
+    #create_room(room_layouts.ROOM_LAYOUT_TEST, (1, 0))
 
     resources.play_music(resources.MUSIC_A)
 
 
 def update():
+    if game.stop_frames > 0:
+        return
     #
     # Update camera
     #
@@ -94,31 +100,35 @@ def update():
                 obj_hook.update_hook(obj, destroy_list)
             elif obj.obj_type == ObjType.Player:
                 obj_player.update_player(obj, destroy_list)
-            elif obj.obj_type == ObjType.Enemy:
-                if obj.collided_during_hook is True:
-                    # TODO: Explode, kill player
-                    destroy_list.append(obj)
+            elif obj.obj_type == ObjType.EnemyFlying:
+                obj_enemy.update_enemy_flying(obj, destroy_list)
+            elif obj.obj_type == ObjType.EnemyWalking:
+                obj_enemy.update_enemy_flying(obj, destroy_list)
             elif obj.obj_type == ObjType.Coin:
-                # TODO: Add visible count on screen
                 if game_object.get_dist_obj(obj, game.player_obj) < GRID_CELL_SIZE:
                     game.player_obj.player_collected_coins += 1
                     destroy_list.append(obj)
             elif obj.obj_type == ObjType.Key:
-                # TODO: Add visible count on screen
                 if game_object.get_dist_obj(obj, game.player_obj) < GRID_CELL_SIZE:
                     game.player_obj.player_collected_keys += 1
                     destroy_list.append(obj)
+            elif obj.obj_type == ObjType.Door:
+                if game_object.get_dist_obj(obj, game.player_obj) < GRID_CELL_SIZE:
+                    if game.player_obj.player_collected_keys > 0:
+                        game.player_obj.player_collected_keys -= 1
+                        destroy_list.append(obj)
             elif obj.obj_type == ObjType.Checkpoint:
                 if not obj.checkpoint_used:
                     if game_object.get_dist_obj(obj, game.player_obj) < GRID_CELL_SIZE + HALF_GRID_CELL:
                         # TODO: Save game state!
                         obj.checkpoint_used = True
                         obj.last_input_frame = pyxel.frame_count
-                        ckpt_name = None
-                        if get_current_room() == (0, 0):
-                            ckpt_name = "ENTRANCE"
-                        assert ckpt_name is not None
-                        game.player_obj.player_last_checkpoint_name = ckpt_name
+                        game.player_obj.player_last_checkpoint_name = obj.checkpoint_name
+            elif obj.obj_type == ObjType.ParticleRun or obj.obj_type == ObjType.ParticleExplosion:
+                obj.particle_lifetime -= 1
+                if obj.particle_lifetime <= 1:
+                    destroy_list.append(obj)
+                    game.player_obj.player_particle_count -= 1
 
             if obj.velocity is not None and obj.velocity != (0, 0):
                 vel_sign_x = utils.sign(obj.velocity[0])
@@ -147,8 +157,11 @@ def update():
             obj.collisions = []
 
 
-
 def draw():
+    if game.stop_frames > 0:
+        game.stop_frames -= 1
+        return
+
     pyxel.cls(resources.COLOR_BACKGROUND)
     if game.game_state == GameState.Splash:
         if game.splash_timer <= 1:
@@ -195,7 +208,12 @@ def draw():
                 else:
                     resources.blt_sprite(obj.get_render_sprite(), obj.pos_x, obj.pos_y)
             else:
-                resources.blt_sprite(obj.get_render_sprite(), obj.pos_x, obj.pos_y)
+                invert = False
+                invert_y = False
+                if obj.obj_type == ObjType.ParticleRun or obj.obj_type == ObjType.ParticleExplosion:
+                    invert = obj.particle_invert
+                    invert_y = obj.particle_invert_y
+                resources.blt_sprite(obj.get_render_sprite(), obj.pos_x, obj.pos_y, invert=invert, invert_y=invert_y)
 
             if DEBUG_DRAW_COLLIDERS:
                 if obj.collides:
@@ -233,7 +251,6 @@ def draw():
         # Center the text
         pos_x += (13-len(s)) * 2  # Each char is 4 pixels wide (3 + spacing)
         pyxel.text(pos_x, pos_y+6, s, resources.COLOR_DARK)
-
 
 
 init()

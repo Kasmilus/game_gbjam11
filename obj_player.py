@@ -63,6 +63,14 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
         if move_dir[0] != 0:
             obj.last_facing_dir_anim = move_dir[0]
 
+        # Running particle
+        if (Controls.left(one=True) or Controls.right(one=True)) and obj.player_particle_count < 2:
+            run_particle = Obj(pos=obj.get_pos(), **resources.ALL_OBJECTS['PARTICLE_RUN'])
+            if obj.last_facing_dir_anim < 0:
+                run_particle.particle_invert = True
+            game.objects.append(run_particle)
+            obj.player_particle_count += 1
+
     # Hook shot
     if Controls.a(one=True):
         if obj.player_available_hooks > 0:
@@ -91,4 +99,6 @@ def draw_player(obj: Obj) -> None:
     invert = False
     if obj.last_facing_dir_anim < 0:
         invert = True
-    resources.blt_sprite(obj.get_render_sprite(), obj.pos_x, obj.pos_y, invert=invert)
+
+    render_sprite = obj.get_render_sprite()
+    resources.blt_sprite(render_sprite, obj.pos_x, obj.pos_y, invert=invert)

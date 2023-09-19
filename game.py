@@ -28,13 +28,7 @@ class Game:
 
     player_obj: Obj = None  # Reference to the player
 
-    test_x = 140
-    test_y = 40
-    test_x_end = 100
-    test_y_end = 100
-    test_x_start = 0
-    test_y_start = 0
-
+    stop_frames: int = 0
 
 
 game: Game = Game()

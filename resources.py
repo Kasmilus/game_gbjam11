@@ -25,7 +25,22 @@ SPRITE_PLAYER_RUN_SPEED = 7
 SPRITE_PLAYER_ROLL_SPEED = 4
 SPRITE_PLAYER_DEATH_SPEED = 5
 
+SPRITE_ENEMY_FLYING_IDLE = [(0, 11), (1, 11), (2, 11), (3, 11)]
+SPRITE_ENEMY_FLYING_RUN = SPRITE_ENEMY_FLYING_IDLE
+SPRITE_ENEMY_FLYING_DEATH = [(5, 11), (6, 11), (7, 11), (8, 11)]
+SPRITE_ENEMY_FLYING_IDLE_SPEED = 12
+SPRITE_ENEMY_FLYING_RUN_SPEED = 8
+SPRITE_ENEMY_FLYING_DEATH_SPEED = 4
+
+SPRITE_ENEMY_WALKING_IDLE = [(0, 12), (1, 12), (2, 12), (3, 12)]
+SPRITE_ENEMY_WALKING_RUN = [(5, 12), (6, 12), (7, 12), (8, 12)]
+SPRITE_ENEMY_WALKING_DEATH = [(10, 12), (11, 12), (12, 12), (13, 12)]
+SPRITE_ENEMY_WALKING_IDLE_SPEED = 12
+SPRITE_ENEMY_WALKING_RUN_SPEED = 8
+SPRITE_ENEMY_WALKING_DEATH_SPEED = 3
+
 SPRITE_CHECKPOINT_ACTIVATION = [(0, 13), (1, 13), (2, 13), (3, 13)]
+
 #
 # SPRITES
 #
@@ -48,8 +63,8 @@ ALL_OBJECTS = {
     'WALL_LEFT': {'name': 'Wall', "sprite": (4, 8), "obj_type": ObjType.World},
     'WALL_RIGHT': {'name': 'Wall', "sprite": (6, 8), "obj_type": ObjType.World},
 
-    'ENEMY_A': {'name': 'EnemyA', 'sprite': (0, 11), "obj_type": ObjType.Enemy, "is_hookable": True},
-    'ENEMY_B': {'name': 'EnemyB', 'sprite': (1, 11), "obj_type": ObjType.Enemy, "is_hookable": True},
+    'ENEMY_WALKING': {'name': 'Enemy Walking', 'sprite': SPRITE_ENEMY_WALKING_IDLE, "obj_type": ObjType.EnemyWalking, "is_hookable": False},
+    'ENEMY_FLYING': {'name': 'Enemy Flying', 'sprite': SPRITE_ENEMY_FLYING_IDLE, "obj_type": ObjType.EnemyFlying, "is_hookable": True},
 
     'STONE_A': {'name': 'Stone', 'sprite': (0, 5), 'obj_type': ObjType.World, 'is_hookable': True},
     'STONE_B': {'name': 'Stone', 'sprite': (3, 5), 'obj_type': ObjType.World},
@@ -66,13 +81,35 @@ ALL_OBJECTS = {
     'KEY': {'name': 'Key', 'sprite': [(0, 14), (1, 14), (2, 14), (3, 14)], 'obj_type': ObjType.Key},
     'DOOR': {'name': 'Door', 'sprite': (4, 14), 'obj_type': ObjType.Door},
 
+    # TODO: Not added yet
+    'LARGE_TREE_TOP': {'name': 'Large Tree (top)', "sprite": (1, 5), "obj_type": ObjType.World},
+    'LARGE_TREE_BOTTOM': {'name': 'Large Tree (bottom)', "sprite": (1, 6), "obj_type": ObjType.World},
+    'SMALL_TREE': {'name': 'Small Tree', "sprite": (2, 5), "obj_type": ObjType.World},
+    'LARGE_STONE_A': {'name': 'Extra Large Stone 1', "sprite": (5, 5), "obj_type": ObjType.World, 'collides':False},
+    'LARGE_STONE_B': {'name': 'Extra Large Stone 2', "sprite": (6, 5), "obj_type": ObjType.World, 'collides': False},
+    'LARGE_STONE_C': {'name': 'Extra Large Stone 3', "sprite": (5, 6), "obj_type": ObjType.World, 'collides': True},
+    'LARGE_STONE_D': {'name': 'Extra Large Stone 4', "sprite": (6, 6), "obj_type": ObjType.World, 'collides': True},
+
+    #
+    # SPRITES - PARTICLES
+    #
+    'PARTICLE_RUN': {'name': 'Particle', "sprite": [(6, 2),(7, 2),(8, 2),(9, 2),(10, 2),(11, 2), (12, 3), (13, 2)], "obj_type": ObjType.ParticleRun},
+    'PARTICLE_EXPLOSION': {'name': 'Particle', "sprite": [(8, 5), (9, 5), (10, 5), (11, 5), (12, 5), (13, 5), (14, 5), (15, 5)], "obj_type": ObjType.ParticleExplosion},
+
     #
     # SPRITES - DECOR
     #
     'FLOWER_Q': {'name': 'Flower', "sprite": [(0, 2), (1, 2), (2, 2), (3, 2)], "obj_type": ObjType.Decor},
-    'FLOWER_W': {'name': 'Flower', "sprite": [(0, 3), (1, 3), (2, 3)], "obj_type": ObjType.Decor},
-    'FLOWER_E': {'name': 'Flower', "sprite": [(0, 4), (1, 4), (2, 4)], "obj_type": ObjType.Decor},
-    'FLOWER_R': {'name': 'Flower', "sprite": [(4, 3), (5, 3), (6, 3), (7, 3)], "obj_type": ObjType.Decor},
+    'FLOWER_W': {'name': 'Flower', "sprite": [(0, 3), (1, 3), (2, 3), (3, 3)], "obj_type": ObjType.Decor},
+    'FLOWER_E': {'name': 'Flower', "sprite": [(0, 4), (1, 4), (2, 4), (3, 4)], "obj_type": ObjType.Decor},
+
+    'MUSHROOM_A': {'name': 'Mushroom', "sprite": (3, 4), "obj_type": ObjType.Decor},
+    'MUSHROOM_B': {'name': 'Mushroom', "sprite": (4, 4), "obj_type": ObjType.Decor},
+    'GRASS_H': {'name': 'Grass', "sprite": (5, 4), "obj_type": ObjType.Decor},
+    'GRASS_J': {'name': 'Grass', "sprite": (6, 4), "obj_type": ObjType.Decor},
+    'GRASS_K': {'name': 'Grass', "sprite": (7, 4), "obj_type": ObjType.Decor},
+    'GRASS_L': {'name': 'Grass', "sprite": (8, 4), "obj_type": ObjType.Decor},
+    'LITTLE_STONE': {'name': 'Tiny Stone', "sprite": (9, 4), "obj_type": ObjType.Decor},
 }
 
 SPRITE_WALL_CORNER_LU = (0, 5)
@@ -114,14 +151,17 @@ def reset_color() -> None:
     pal()
 
 
-def blt_sprite(spritesheet_pos: Tuple[int, int], x: int, y: int, transparent_color=0, invert: bool = False) -> None:
-    size = SPRITE_SIZE
+def blt_sprite(spritesheet_pos: Tuple[int, int], x: int, y: int, transparent_color=0, invert: bool = False, invert_y: bool = False) -> None:
+    size_x = SPRITE_SIZE
+    size_y = SPRITE_SIZE
     if invert:
-        size = -size
+        size_x = -size_x
+    if invert_y:
+        size_y = -size_y
 
     blt(x, y, IMAGE_SPRITES,
         SPRITE_SIZE*spritesheet_pos[0], SPRITE_SIZE*spritesheet_pos[1],
-        size, SPRITE_SIZE, colkey=transparent_color)
+        size_x, size_y, colkey=transparent_color)
 
 
 def blt_splash(x: int, y: int) -> None:

@@ -9,7 +9,6 @@ import utils
 class ObjType(Enum):
     Undefined = 0
     Player = 1
-    Enemy = 2
     World = 3
     PlayerHook = 4
     Decor = 5
@@ -17,6 +16,12 @@ class ObjType(Enum):
     Key = 7
     Door = 8
     Checkpoint = 9
+
+    ParticleRun = 10
+    ParticleExplosion = 11
+
+    EnemyFlying = 12
+    EnemyWalking = 13
 
 
 class Obj:
@@ -36,6 +41,7 @@ class Obj:
         self.collides = collides
         self.last_input_frame = 0  # for anim
         self.collided_during_hook = False
+        self.death_timer = None
 
         self.bounding_box = (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)
         self.draw_priority = 0  # The higher, the later it will be drawn (on top of others)
@@ -56,6 +62,7 @@ class Obj:
             self.player_collected_coins = 0
             self.player_collected_keys = 0
             self.player_last_checkpoint_name = "---"
+            self.player_particle_count = 0
 
         # Hook
         if obj_type == ObjType.PlayerHook:
@@ -66,9 +73,12 @@ class Obj:
             self.hook_attached_object = None  # Set on contact
 
         # Enemies
-        if obj_type == ObjType.Enemy:
+        if obj_type == ObjType.EnemyFlying:
             self.draw_priority = 4
-            self.bounding_box = (5, 3, GRID_CELL_SIZE-5, GRID_CELL_SIZE-1)
+            self.bounding_box = (5, 4, GRID_CELL_SIZE-5, GRID_CELL_SIZE-4)
+        if obj_type == ObjType.EnemyWalking:
+            self.draw_priority = 4
+            self.bounding_box = (2, 3, GRID_CELL_SIZE-2, GRID_CELL_SIZE-1)
 
         if obj_type == ObjType.Decor:
             self.collides = False
@@ -88,6 +98,23 @@ class Obj:
 
         if obj_type == ObjType.Checkpoint:
             self.checkpoint_used = False
+
+        if obj_type == ObjType.ParticleRun:
+            self.last_input_frame = pyxel.frame_count
+            self.anim_speed = 5
+            self.particle_lifetime = (len(self.sprite)-1) * self.anim_speed
+            self.collides = False
+            self.particle_invert = False
+            self.particle_invert_y = False
+            self.draw_priority = 3  # Above world, below characters
+        if obj_type == ObjType.ParticleExplosion:
+            self.last_input_frame = pyxel.frame_count
+            self.anim_speed = 4
+            self.particle_lifetime = (len(self.sprite)-1) * self.anim_speed
+            self.collides = False
+            self.particle_invert = pyxel.rndi(0, 1) == 1
+            self.particle_invert_y = pyxel.rndi(0, 1) == 1
+            self.draw_priority = 3  # Above world, below characters
 
     def __repr__(self):
         pos = int(self.pos_x / GRID_CELL_SIZE), int(self.pos_y / GRID_CELL_SIZE)

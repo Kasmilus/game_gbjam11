@@ -15,7 +15,7 @@ def get_pos_for_room(cell_pos: Tuple[int, int], room_coords: Tuple[int, int] = N
     return room_origin[0] + cell_pos[0] * GRID_CELL_SIZE, room_origin[1] + cell_pos[1] * GRID_CELL_SIZE
 
 
-def create_room(layout: str, room_coords: Tuple[int, int]) -> None:
+def create_room(layout: str, room_coords: Tuple[int, int], room_name: str) -> None:
     lines = layout.splitlines()
     assert len(lines) == ROOM_SIZE_Y
     for cell_pos_y, line in enumerate(lines):
@@ -66,27 +66,44 @@ def create_room(layout: str, room_coords: Tuple[int, int]) -> None:
 
             elif c == 'A':
                 new_obj = Obj(**ALL_OBJECTS['CHECKPOINT'], pos=pos)
+                new_obj.checkpoint_name = room_name
             elif c == 'B':
                 new_obj = Obj(**ALL_OBJECTS['COIN'], pos=pos)
             elif c == 'C':
                 new_obj = Obj(**ALL_OBJECTS['KEY'], pos=pos)
             elif c == 'D':
                 new_obj = Obj(**ALL_OBJECTS['DOOR'], pos=pos)
+
+            elif c == 'O':
+                new_obj = Obj(**ALL_OBJECTS['ENEMY_FLYING'], pos=pos)
+            elif c == 'P':
+                new_obj = Obj(**ALL_OBJECTS['ENEMY_WALKING'], pos=pos)
             #
             # Decor
             #
             elif c == 'Q':
                 new_obj = Obj(**ALL_OBJECTS['FLOWER_Q'], pos=pos)
-                new_obj.anim_speed = 135
+                new_obj.anim_speed = 115
             elif c == 'W':
                 new_obj = Obj(**ALL_OBJECTS['FLOWER_W'], pos=pos)
-                new_obj.anim_speed = 132
+                new_obj.anim_speed = 94
             elif c == 'E':
                 new_obj = Obj(**ALL_OBJECTS['FLOWER_E'], pos=pos)
-                new_obj.anim_speed = 138
+                new_obj.anim_speed = 238
             elif c == 'R':
-                new_obj = Obj(**ALL_OBJECTS['FLOWER_R'], pos=pos)
-                new_obj.anim_speed = 150
+                new_obj = Obj(**ALL_OBJECTS['LITTLE_STONE'], pos=pos)
+            elif c == 'F':
+                new_obj = Obj(**ALL_OBJECTS['MUSHROOM_A'], pos=pos)
+            elif c == 'G':
+                new_obj = Obj(**ALL_OBJECTS['MUSHROOM_B'], pos=pos)
+            elif c == 'H':
+                new_obj = Obj(**ALL_OBJECTS['GRASS_H'], pos=pos)
+            elif c == 'J':
+                new_obj = Obj(**ALL_OBJECTS['GRASS_J'], pos=pos)
+            elif c == 'K':
+                new_obj = Obj(**ALL_OBJECTS['GRASS_K'], pos=pos)
+            elif c == 'L':
+                new_obj = Obj(**ALL_OBJECTS['GRASS_L'], pos=pos)
             else:
                 raise Exception("Unknown cell type!")
 
