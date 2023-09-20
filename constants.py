@@ -5,4 +5,6 @@ HALF_GRID_CELL: int = 8
 ROOM_SIZE_X: int = 10
 ROOM_SIZE_Y: int = 7
 DEBUG_DRAW_COLLIDERS: bool = False
+GAME_RESTART_TIME: float = 0.9
+GAME_DEATH_TIME: float = 0.7
 

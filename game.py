@@ -9,26 +9,35 @@ from room import *
 class GameState(Enum):
     Splash = 1,
     PressToStart = 2,
-    Game = 3
+    Game = 3,
+    GameOver = 4
 
 
 class Game:
-    game_state: GameState = GameState.Game
-    #game_state: GameState = GameState.Splash
-    objects: List[Obj] = []
+    def __init__(self):
+        self.game_state: GameState = GameState.Game
+        #self.game_state: GameState = GameState.Splash
+        self.objects: List[Obj] = []
 
-    splash_timer: float = 0
-    press_to_start_timer: float = 0
+        self.splash_timer: float = 0
+        self.press_to_start_timer: float = 0
 
-    camera_x: int = 0
-    camera_y: int = 0
-    camera_target_x: int = 0
-    camera_target_y: int = 0
-    camera_move_timer: float = 0
+        self.camera_x: int = 0
+        self.camera_y: int = 0
+        self.camera_target_x: int = 0
+        self.camera_target_y: int = 0
+        self.camera_move_timer: float = 0
 
-    player_obj: Obj = None  # Reference to the player
+        self.player_obj: Obj = None  # Reference to the player
 
-    stop_frames: int = 0
+        self.stop_frames: int = 0
+
+        self.time_since_game_over: int = 0
+        self.return_to_game: bool = False
 
 
-game: Game = Game()
+def init_game():
+    global game
+    global game_checkpoint
+    game = Game()
+    game_checkpoint = None

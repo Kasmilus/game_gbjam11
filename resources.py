@@ -57,12 +57,12 @@ ALL_OBJECTS = {
     'WALL_OPENING_LEFT_BOTTOM': {'name': 'Wall', "sprite": (7, 9), "obj_type": ObjType.World},
     'WALL_OPENING_RIGHT_TOP': {'name': 'Wall', "sprite": (8, 8), "obj_type": ObjType.World},
     'WALL_OPENING_RIGHT_BOTTOM': {'name': 'Wall', "sprite": (8, 9), "obj_type": ObjType.World},
-    'WALL_OPENING_DOWN_LEFT': {'name': 'Wall', "sprite": (4, 10), "obj_type": ObjType.World},
-    'WALL_OPENING_DOWN_RIGHT': {'name': 'Wall', "sprite": (5, 10), "obj_type": ObjType.World},
+    'WALL_OPENING_DOWN_LEFT': {'name': 'Wall', "sprite": (4, 10), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
+    'WALL_OPENING_DOWN_RIGHT': {'name': 'Wall', "sprite": (5, 10), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
     'WALL_UP': {'name': 'Wall', "sprite": (5, 7), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
     'WALL_DOWN': {'name': 'Wall', "sprite": (5, 9), "obj_type": ObjType.World, 'bounding_box': (0, 6, GRID_CELL_SIZE, GRID_CELL_SIZE)},
-    'WALL_LEFT': {'name': 'Wall', "sprite": (4, 8), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE-4, GRID_CELL_SIZE)},
-    'WALL_RIGHT': {'name': 'Wall', "sprite": (6, 8), "obj_type": ObjType.World, 'bounding_box': (4, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)},
+    'WALL_LEFT': {'name': 'Wall', "sprite": (4, 8), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE-6, GRID_CELL_SIZE)},
+    'WALL_RIGHT': {'name': 'Wall', "sprite": (6, 8), "obj_type": ObjType.World, 'bounding_box': (6, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)},
 
     'WATER_CORNER_LU': {'name': 'Water', "sprite": (0, 7), "obj_type": ObjType.Water},
     'WATER_CORNER_RU': {'name': 'Water', "sprite": (3, 7), "obj_type": ObjType.Water},
@@ -86,10 +86,10 @@ ALL_OBJECTS = {
     'STONE_LARGE_11': {'name': 'LargeStone', 'sprite': (6, 6), 'obj_type': ObjType.World},
 
 
-    'CHECKPOINT': {'name': 'Checkpoint', 'sprite': [(0, 13), (1, 13), (2, 13), (3, 13)], 'obj_type': ObjType.Checkpoint},
+    'CHECKPOINT': {'name': 'Checkpoint', 'sprite': [(0, 13), (1, 13), (2, 13), (3, 13)], 'obj_type': ObjType.Checkpoint, 'bounding_box': (2, 6, GRID_CELL_SIZE-2, GRID_CELL_SIZE)},
     'COIN': {'name': 'Coin', 'sprite': [(0, 15), (1, 15), (2, 15), (3, 15), (4, 15)], 'obj_type': ObjType.Coin},
     'KEY': {'name': 'Key', 'sprite': [(0, 14), (1, 14), (2, 14), (3, 14)], 'obj_type': ObjType.Key},
-    'DOOR': {'name': 'Door', 'sprite': (4, 14), 'obj_type': ObjType.Door},
+    'DOOR': {'name': 'Door', 'sprite': (4, 14), 'obj_type': ObjType.Door, 'bounding_box': (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
 
     'LARGE_TREE_TOP': {'name': 'Large Tree (top)', "sprite": (1, 5), "obj_type": ObjType.World, 'bounding_box': (0, 6, GRID_CELL_SIZE, GRID_CELL_SIZE)},
     'LARGE_TREE_BOTTOM': {'name': 'Large Tree (bottom)', "sprite": (1, 6), "obj_type": ObjType.World},

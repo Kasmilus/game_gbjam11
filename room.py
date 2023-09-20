@@ -5,7 +5,7 @@ from enum import Enum
 from game_object import Obj, ObjType
 from constants import *
 from resources import ALL_OBJECTS
-from game import game
+import game
 
 
 def get_pos_for_room(cell_pos: Tuple[int, int], room_coords: Tuple[int, int] = None) -> Tuple[int, int]:
@@ -38,6 +38,7 @@ def create_room(layout: str, room_coords: Tuple[int, int], room_name: str) -> No
                 new_obj = Obj(**ALL_OBJECTS['WALL_UP'], pos=pos)
             elif c == '6':
                 new_obj = Obj(**ALL_OBJECTS['WALL_DOWN'], pos=pos)
+                new_obj.draw_priority = 7
             elif c == '7':
                 new_obj = Obj(**ALL_OBJECTS['WALL_LEFT'], pos=pos)
             elif c == '8':
@@ -147,7 +148,7 @@ def create_room(layout: str, room_coords: Tuple[int, int], room_name: str) -> No
                 raise Exception(f"Unknown cell type: {c}!")
 
             assert type(new_obj) is Obj
-            game.objects.append(new_obj)
+            game.game.objects.append(new_obj)
 
 def get_room_from_pos(pos: Tuple[int, int]) -> Tuple[int, int]:
     cell_coord = round(pos[0] / GRID_CELL_SIZE), round(pos[1] / GRID_CELL_SIZE)
@@ -159,8 +160,8 @@ def get_pos_from_room_coords(room_coords: Tuple[int, int]) -> Tuple[int, int]:
     return pos
 
 def move_camera_to_new_room(room_coords: Tuple[int, int]) -> None:
-    game.camera_target_x, game.camera_target_y = get_pos_from_room_coords(room_coords)
-    game.camera_move_timer = 0
+    game.game.camera_target_x, game.game.camera_target_y = get_pos_from_room_coords(room_coords)
+    game.game.camera_move_timer = 0
 
 def get_current_room() -> Tuple[int, int]:
-    return get_room_from_pos((game.camera_target_x, game.camera_target_y))
+    return get_room_from_pos((game.game.camera_target_x, game.game.camera_target_y))

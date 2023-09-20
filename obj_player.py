@@ -14,12 +14,17 @@ import interp
 from controls import Controls
 import resources
 import game_object
-from game import *
 
 
 def player_death():
-    print("AAAAAAAAAAAAAAAAa")
-    pass
+    game.game.return_to_game = False
+    game.game.game_state = game.GameState.GameOver
+    game.game.time_since_game_over = 0
+    game.game.player_pos_at_death = game.game.player_obj.get_pos()
+    # TODO: One shot anim
+    game.game.player_obj.sprite = resources.SPRITE_PLAYER_DEATH
+    game.game.player_obj.player_speed = resources.SPRITE_PLAYER_DEATH_SPEED
+
 
 def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
     player_current_room = get_room_from_pos((obj.pos_x, obj.pos_y))
@@ -42,10 +47,11 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
         return
 
     # Check if fell into water
-    for obj2 in game.objects:
+    for obj2 in game.game.objects:
         if obj2.obj_type is ObjType.Water:
             if game_object.collision_obj(obj, obj2):
                 player_death()
+                return
 
     # Check movement input dir
     move_dir = [0, 0]
@@ -58,7 +64,7 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
     elif Controls.right():
         move_dir[0] += obj.player_speed
     # Check if movement would result in collision
-    for obj2 in game.objects:
+    for obj2 in game.game.objects:
         if obj2 is not obj and obj2.obj_type is not ObjType.PlayerHook:
             move_dir = game_object.check_obj_move_collision(obj, obj2, move_dir)
 
@@ -78,7 +84,7 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
             run_particle = Obj(pos=obj.get_pos(), **resources.ALL_OBJECTS['PARTICLE_RUN'])
             if obj.last_facing_dir_anim < 0:
                 run_particle.particle_invert = True
-            game.objects.append(run_particle)
+            game.game.objects.append(run_particle)
             obj.player_particle_count += 1
 
     # Hook shot
@@ -90,7 +96,7 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
             hook = Obj(**resources.ALL_OBJECTS['HOOK'], pos=hook_pos)
             hook.hook_velocity = (obj.last_move_dir[0] * obj.player_hook_speed, obj.last_move_dir[1] * obj.player_hook_speed)
             hook.hook_move_back_speed = obj.player_hook_speed
-            game.objects.append(hook)
+            game.game.objects.append(hook)
 
     if Controls.any_dir(one=True):
         obj.last_input_frame = pyxel.frame_count
