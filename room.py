@@ -55,6 +55,25 @@ def create_room(layout: str, room_coords: Tuple[int, int], room_name: str) -> No
             elif c == 'n':
                 new_obj = Obj(**ALL_OBJECTS['WALL_OPENING_DOWN_RIGHT'], pos=pos)
 
+            elif c == 't':
+                new_obj = Obj(**ALL_OBJECTS['WATER_CORNER_LU'], pos=pos)
+            elif c == 'y':
+                new_obj = Obj(**ALL_OBJECTS['WATER_CORNER_RU'], pos=pos)
+            elif c == 'u':
+                new_obj = Obj(**ALL_OBJECTS['WATER_CORNER_LD'], pos=pos)
+            elif c == 'i':
+                new_obj = Obj(**ALL_OBJECTS['WATER_CORNER_RD'], pos=pos)
+            elif c == '@':
+                new_obj = Obj(**ALL_OBJECTS['WATER'], pos=pos)
+            elif c == 'g':
+                new_obj = Obj(**ALL_OBJECTS['WATER_UP'], pos=pos)
+            elif c == 'h':
+                new_obj = Obj(**ALL_OBJECTS['WATER_DOWN'], pos=pos)
+            elif c == 'j':
+                new_obj = Obj(**ALL_OBJECTS['WATER_LEFT'], pos=pos)
+            elif c == 'k':
+                new_obj = Obj(**ALL_OBJECTS['WATER_RIGHT'], pos=pos)
+
             elif c == 'q':
                 new_obj = Obj(**ALL_OBJECTS['STONE_A'], pos=pos)
             elif c == 'w':
@@ -64,19 +83,39 @@ def create_room(layout: str, room_coords: Tuple[int, int], room_name: str) -> No
             elif c == 'r':
                 new_obj = Obj(**ALL_OBJECTS['STONE_D'], pos=pos)
 
-            elif c == 'A':
+            elif c == '[':
+                new_obj = Obj(**ALL_OBJECTS['LARGE_TREE_TOP'], pos=pos)
+                new_obj.draw_priority = 7
+            elif c == ']':
+                new_obj = Obj(**ALL_OBJECTS['LARGE_TREE_BOTTOM'], pos=pos)
+            elif c == '#':
+                new_obj = Obj(**ALL_OBJECTS['SMALL_TREE'], pos=pos)
+            elif c == 'o':
+                new_obj = Obj(**ALL_OBJECTS['LARGE_STONE_A'], pos=pos)
+                new_obj.draw_priority = 7
+            elif c == 'p':
+                new_obj = Obj(**ALL_OBJECTS['LARGE_STONE_B'], pos=pos)
+                new_obj.draw_priority = 7
+            elif c == 'k':
+                new_obj = Obj(**ALL_OBJECTS['LARGE_STONE_C'], pos=pos)
+                new_obj.draw_priority = 7
+            elif c == 'l':
+                new_obj = Obj(**ALL_OBJECTS['LARGE_STONE_D'], pos=pos)
+                new_obj.draw_priority = 7
+
+            elif c == 'a':
                 new_obj = Obj(**ALL_OBJECTS['CHECKPOINT'], pos=pos)
                 new_obj.checkpoint_name = room_name
-            elif c == 'B':
+            elif c == 's':
                 new_obj = Obj(**ALL_OBJECTS['COIN'], pos=pos)
-            elif c == 'C':
+            elif c == 'd':
                 new_obj = Obj(**ALL_OBJECTS['KEY'], pos=pos)
-            elif c == 'D':
+            elif c == 'f':
                 new_obj = Obj(**ALL_OBJECTS['DOOR'], pos=pos)
 
-            elif c == 'O':
+            elif c == 'T':
                 new_obj = Obj(**ALL_OBJECTS['ENEMY_FLYING'], pos=pos)
-            elif c == 'P':
+            elif c == 'Y':
                 new_obj = Obj(**ALL_OBJECTS['ENEMY_WALKING'], pos=pos)
             #
             # Decor
@@ -105,7 +144,7 @@ def create_room(layout: str, room_coords: Tuple[int, int], room_name: str) -> No
             elif c == 'L':
                 new_obj = Obj(**ALL_OBJECTS['GRASS_L'], pos=pos)
             else:
-                raise Exception("Unknown cell type!")
+                raise Exception(f"Unknown cell type: {c}!")
 
             assert type(new_obj) is Obj
             game.objects.append(new_obj)

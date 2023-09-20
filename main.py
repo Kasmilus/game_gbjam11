@@ -93,9 +93,9 @@ def update():
                                     if not game_object.collision_bb((obj.pos_x + dir[0], obj.pos_y + dir[1]), obj.bounding_box, obj2.get_pos(), obj2.bounding_box):
                                         move_dir = dir
                                         break
-                            if move_dir:
-                                obj.pos_x += move_dir[0]
-                                obj.pos_y += move_dir[1]
+                            #if move_dir:
+                            #    obj.pos_x += move_dir[0]
+                            #    obj.pos_y += move_dir[1]
             if obj.obj_type == ObjType.PlayerHook:
                 obj_hook.update_hook(obj, destroy_list)
             elif obj.obj_type == ObjType.Player:

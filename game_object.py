@@ -23,9 +23,11 @@ class ObjType(Enum):
     EnemyFlying = 12
     EnemyWalking = 13
 
+    Water = 14
+
 
 class Obj:
-    def __init__(self, obj_type: ObjType, sprite: Tuple[int, int], pos: Tuple[int, int], name:str = "Unknown", collides: bool = True, is_hookable: bool = False):
+    def __init__(self, obj_type: ObjType, sprite: Tuple[int, int], pos: Tuple[int, int], name:str = "Unknown", collides: bool = True, is_hookable: bool = False, bounding_box: Tuple[int, int, int, int] = None):
         self.name = name
         self.obj_type = obj_type
         self.sprite = sprite
@@ -43,14 +45,17 @@ class Obj:
         self.collided_during_hook = False
         self.death_timer = None
 
-        self.bounding_box = (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)
+        if bounding_box is None:
+            self.bounding_box = (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)
+        else:
+            self.bounding_box = bounding_box
         self.draw_priority = 0  # The higher, the later it will be drawn (on top of others)
         self.anim_speed = 18
         self.last_facing_dir_anim = 1
 
         # Player specific
         if obj_type == ObjType.Player:
-            self.bounding_box = (5, 2, GRID_CELL_SIZE-5, GRID_CELL_SIZE-1)
+            self.bounding_box = (5, 7, GRID_CELL_SIZE-5, GRID_CELL_SIZE)
             self.draw_priority = 3
             self.player_speed = 0
             self.player_dash_timer = 0
@@ -85,7 +90,6 @@ class Obj:
             self.draw_priority = 0
 
         if obj_type == ObjType.World:
-            self.collides = True
             self.draw_priority = 1
 
         if obj_type == ObjType.Coin:

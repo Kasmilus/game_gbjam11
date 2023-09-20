@@ -17,6 +17,10 @@ import game_object
 from game import *
 
 
+def player_death():
+    print("AAAAAAAAAAAAAAAAa")
+    pass
+
 def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
     player_current_room = get_room_from_pos((obj.pos_x, obj.pos_y))
     if get_current_room() != player_current_room:
@@ -36,6 +40,12 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
         obj.sprite = resources.SPRITE_PLAYER_ROLL
         obj.anim_speed = resources.SPRITE_PLAYER_ROLL_SPEED
         return
+
+    # Check if fell into water
+    for obj2 in game.objects:
+        if obj2.obj_type is ObjType.Water:
+            if game_object.collision_obj(obj, obj2):
+                player_death()
 
     # Check movement input dir
     move_dir = [0, 0]

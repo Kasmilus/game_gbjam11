@@ -2,6 +2,7 @@ from typing import Tuple
 
 from pyxel import blt, play, playm, pal
 
+from constants import GRID_CELL_SIZE, HALF_GRID_CELL
 from game_object import ObjType
 
 IMAGE_SPLASH = 0
@@ -48,20 +49,29 @@ ALL_OBJECTS = {
     "PLAYER": {'name': 'Player', "sprite": SPRITE_PLAYER_IDLE, "obj_type": ObjType.Player},
     "HOOK": {'name': 'Hook', 'sprite': [(0, 1), (1, 1), (2, 1), (3, 1)], "obj_type": ObjType.PlayerHook},
 
-    'WALL_CORNER_LU': {'name': 'Wall', "sprite": (4, 7), "obj_type": ObjType.World},
-    'WALL_CORNER_RU': {'name': 'Wall', "sprite": (6, 7), "obj_type": ObjType.World},
-    'WALL_CORNER_LD': {'name': 'Wall', "sprite": (4, 9), "obj_type": ObjType.World},
-    'WALL_CORNER_RD': {'name': 'Wall', "sprite": (6, 9), "obj_type": ObjType.World},
+    'WALL_CORNER_LU': {'name': 'Wall', "sprite": (4, 7), "obj_type": ObjType.World, 'bounding_box': (2, 2, GRID_CELL_SIZE-2, GRID_CELL_SIZE-2)},
+    'WALL_CORNER_RU': {'name': 'Wall', "sprite": (6, 7), "obj_type": ObjType.World, 'bounding_box': (2, 2, GRID_CELL_SIZE-2, GRID_CELL_SIZE-2)},
+    'WALL_CORNER_LD': {'name': 'Wall', "sprite": (4, 9), "obj_type": ObjType.World, 'bounding_box': (2, 2, GRID_CELL_SIZE-2, GRID_CELL_SIZE-2)},
+    'WALL_CORNER_RD': {'name': 'Wall', "sprite": (6, 9), "obj_type": ObjType.World, 'bounding_box': (2, 2, GRID_CELL_SIZE-2, GRID_CELL_SIZE-2)},
     'WALL_OPENING_LEFT_TOP': {'name': 'Wall', "sprite": (7, 8), "obj_type": ObjType.World},
     'WALL_OPENING_LEFT_BOTTOM': {'name': 'Wall', "sprite": (7, 9), "obj_type": ObjType.World},
     'WALL_OPENING_RIGHT_TOP': {'name': 'Wall', "sprite": (8, 8), "obj_type": ObjType.World},
     'WALL_OPENING_RIGHT_BOTTOM': {'name': 'Wall', "sprite": (8, 9), "obj_type": ObjType.World},
     'WALL_OPENING_DOWN_LEFT': {'name': 'Wall', "sprite": (4, 10), "obj_type": ObjType.World},
     'WALL_OPENING_DOWN_RIGHT': {'name': 'Wall', "sprite": (5, 10), "obj_type": ObjType.World},
-    'WALL_UP': {'name': 'Wall', "sprite": (5, 7), "obj_type": ObjType.World},
-    'WALL_DOWN': {'name': 'Wall', "sprite": (5, 9), "obj_type": ObjType.World},
-    'WALL_LEFT': {'name': 'Wall', "sprite": (4, 8), "obj_type": ObjType.World},
-    'WALL_RIGHT': {'name': 'Wall', "sprite": (6, 8), "obj_type": ObjType.World},
+    'WALL_UP': {'name': 'Wall', "sprite": (5, 7), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
+    'WALL_DOWN': {'name': 'Wall', "sprite": (5, 9), "obj_type": ObjType.World, 'bounding_box': (0, 6, GRID_CELL_SIZE, GRID_CELL_SIZE)},
+    'WALL_LEFT': {'name': 'Wall', "sprite": (4, 8), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE-4, GRID_CELL_SIZE)},
+    'WALL_RIGHT': {'name': 'Wall', "sprite": (6, 8), "obj_type": ObjType.World, 'bounding_box': (4, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)},
+
+    'WATER_CORNER_LU': {'name': 'Water', "sprite": (0, 7), "obj_type": ObjType.Water},
+    'WATER_CORNER_RU': {'name': 'Water', "sprite": (3, 7), "obj_type": ObjType.Water},
+    'WATER_CORNER_LD': {'name': 'Water', "sprite": (0, 10), "obj_type": ObjType.Water},
+    'WATER_CORNER_RD': {'name': 'Water', "sprite": (3, 10), "obj_type": ObjType.Water},
+    'WATER_UP': {'name': 'Water', "sprite": (1, 7), "obj_type": ObjType.Water},
+    'WATER_DOWN': {'name': 'Water', "sprite": (1, 10), "obj_type": ObjType.Water},
+    'WATER_LEFT': {'name': 'Water', "sprite": (0, 8), "obj_type": ObjType.Water},
+    'WATER_RIGHT': {'name': 'Water', "sprite": (3, 8), "obj_type": ObjType.Water},
 
     'ENEMY_WALKING': {'name': 'Enemy Walking', 'sprite': SPRITE_ENEMY_WALKING_IDLE, "obj_type": ObjType.EnemyWalking, "is_hookable": False},
     'ENEMY_FLYING': {'name': 'Enemy Flying', 'sprite': SPRITE_ENEMY_FLYING_IDLE, "obj_type": ObjType.EnemyFlying, "is_hookable": True},
@@ -81,11 +91,10 @@ ALL_OBJECTS = {
     'KEY': {'name': 'Key', 'sprite': [(0, 14), (1, 14), (2, 14), (3, 14)], 'obj_type': ObjType.Key},
     'DOOR': {'name': 'Door', 'sprite': (4, 14), 'obj_type': ObjType.Door},
 
-    # TODO: Not added yet
-    'LARGE_TREE_TOP': {'name': 'Large Tree (top)', "sprite": (1, 5), "obj_type": ObjType.World},
+    'LARGE_TREE_TOP': {'name': 'Large Tree (top)', "sprite": (1, 5), "obj_type": ObjType.World, 'bounding_box': (0, 6, GRID_CELL_SIZE, GRID_CELL_SIZE)},
     'LARGE_TREE_BOTTOM': {'name': 'Large Tree (bottom)', "sprite": (1, 6), "obj_type": ObjType.World},
-    'SMALL_TREE': {'name': 'Small Tree', "sprite": (2, 5), "obj_type": ObjType.World},
-    'LARGE_STONE_A': {'name': 'Extra Large Stone 1', "sprite": (5, 5), "obj_type": ObjType.World, 'collides':False},
+    'SMALL_TREE': {'name': 'Small Tree', "sprite": (2, 5), "obj_type": ObjType.World, 'bounding_box': (1, 1, GRID_CELL_SIZE-1, GRID_CELL_SIZE-1)},
+    'LARGE_STONE_A': {'name': 'Extra Large Stone 1', "sprite": (5, 5), "obj_type": ObjType.World, 'collides': False},
     'LARGE_STONE_B': {'name': 'Extra Large Stone 2', "sprite": (6, 5), "obj_type": ObjType.World, 'collides': False},
     'LARGE_STONE_C': {'name': 'Extra Large Stone 3', "sprite": (5, 6), "obj_type": ObjType.World, 'collides': True},
     'LARGE_STONE_D': {'name': 'Extra Large Stone 4', "sprite": (6, 6), "obj_type": ObjType.World, 'collides': True},
@@ -122,8 +131,12 @@ SPRITE_WALL_UP = (0, 5)
 #
 # SOUNDS
 #
-SOUND_A = 0
-SOUND_B = 1
+SOUND_PICK_COIN = 0
+SOUND_PICK_KEY = 1
+SOUND_HOOK_ATTACH = 2
+SOUND_HOOK_THROW = 6
+SOUND_ENEMY_DEATH_A = 3
+SOUND_ENEMY_DEATH_B = 4
 
 #
 # MUSIC
