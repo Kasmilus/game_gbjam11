@@ -72,6 +72,7 @@ ALL_OBJECTS = {
     'WATER_DOWN': {'name': 'Water', "sprite": (1, 10), "obj_type": ObjType.Water},
     'WATER_LEFT': {'name': 'Water', "sprite": (0, 8), "obj_type": ObjType.Water},
     'WATER_RIGHT': {'name': 'Water', "sprite": (3, 8), "obj_type": ObjType.Water},
+    'WATER': {'name': 'Water', "sprite": (1, 9), "obj_type": ObjType.Water},
 
     'ENEMY_WALKING': {'name': 'Enemy Walking', 'sprite': SPRITE_ENEMY_WALKING_IDLE, "obj_type": ObjType.EnemyWalking, "is_hookable": False},
     'ENEMY_FLYING': {'name': 'Enemy Flying', 'sprite': SPRITE_ENEMY_FLYING_IDLE, "obj_type": ObjType.EnemyFlying, "is_hookable": True},
@@ -86,12 +87,13 @@ ALL_OBJECTS = {
     'STONE_LARGE_11': {'name': 'LargeStone', 'sprite': (6, 6), 'obj_type': ObjType.World},
 
 
-    'CHECKPOINT': {'name': 'Checkpoint', 'sprite': [(0, 13), (1, 13), (2, 13), (3, 13)], 'obj_type': ObjType.Checkpoint, 'bounding_box': (2, 6, GRID_CELL_SIZE-2, GRID_CELL_SIZE)},
+    'CHECKPOINT': {'name': 'Checkpoint', 'sprite': [(0, 13), (1, 13), (2, 13), (3, 13)], 'obj_type': ObjType.Checkpoint, 'bounding_box': (2, 3, GRID_CELL_SIZE-2, GRID_CELL_SIZE)},
     'COIN': {'name': 'Coin', 'sprite': [(0, 15), (1, 15), (2, 15), (3, 15), (4, 15)], 'obj_type': ObjType.Coin},
     'KEY': {'name': 'Key', 'sprite': [(0, 14), (1, 14), (2, 14), (3, 14)], 'obj_type': ObjType.Key},
     'DOOR': {'name': 'Door', 'sprite': (4, 14), 'obj_type': ObjType.Door, 'bounding_box': (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
+    'DOOR_STANDALONE': {'name': 'Door', 'sprite': (5, 14), 'obj_type': ObjType.Door, 'bounding_box': (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE - 1)},
 
-    'LARGE_TREE_TOP': {'name': 'Large Tree (top)', "sprite": (1, 5), "obj_type": ObjType.World, 'bounding_box': (0, 6, GRID_CELL_SIZE, GRID_CELL_SIZE)},
+    'LARGE_TREE_TOP': {'name': 'Large Tree (top)', "sprite": (1, 5), "obj_type": ObjType.World, 'bounding_box': (1, 10, GRID_CELL_SIZE-1, GRID_CELL_SIZE)},
     'LARGE_TREE_BOTTOM': {'name': 'Large Tree (bottom)', "sprite": (1, 6), "obj_type": ObjType.World},
     'SMALL_TREE': {'name': 'Small Tree', "sprite": (2, 5), "obj_type": ObjType.World, 'bounding_box': (1, 1, GRID_CELL_SIZE-1, GRID_CELL_SIZE-1)},
     'LARGE_STONE_A': {'name': 'Extra Large Stone 1', "sprite": (5, 5), "obj_type": ObjType.World, 'collides': False},

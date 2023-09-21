@@ -32,8 +32,10 @@ def create_room(layout: str, room_coords: Tuple[int, int], room_name: str) -> No
                 new_obj = Obj(**ALL_OBJECTS['WALL_CORNER_RU'], pos=pos)
             elif c == '3':
                 new_obj = Obj(**ALL_OBJECTS['WALL_CORNER_LD'], pos=pos)
+                new_obj.draw_priority = 7
             elif c == '4':
                 new_obj = Obj(**ALL_OBJECTS['WALL_CORNER_RD'], pos=pos)
+                new_obj.draw_priority = 7
             elif c == '5':
                 new_obj = Obj(**ALL_OBJECTS['WALL_UP'], pos=pos)
             elif c == '6':
@@ -113,6 +115,8 @@ def create_room(layout: str, room_coords: Tuple[int, int], room_name: str) -> No
                 new_obj = Obj(**ALL_OBJECTS['KEY'], pos=pos)
             elif c == 'f':
                 new_obj = Obj(**ALL_OBJECTS['DOOR'], pos=pos)
+            elif c == 'D':
+                new_obj = Obj(**ALL_OBJECTS['DOOR_STANDALONE'], pos=pos)
 
             elif c == 'T':
                 new_obj = Obj(**ALL_OBJECTS['ENEMY_FLYING'], pos=pos)

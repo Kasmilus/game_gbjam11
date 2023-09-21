@@ -25,9 +25,11 @@ class ObjType(Enum):
 
     Water = 14
 
+    Text = 15
+
 
 class Obj:
-    def __init__(self, obj_type: ObjType, sprite: Tuple[int, int], pos: Tuple[int, int], name:str = "Unknown", collides: bool = True, is_hookable: bool = False, bounding_box: Tuple[int, int, int, int] = None):
+    def __init__(self, obj_type: ObjType, sprite: Tuple[int, int], pos: Tuple[int, int], name:str = "Unknown", collides: bool = True, is_hookable: bool = False, bounding_box: Tuple[int, int, int, int] = None, text: str = None):
         self.name = name
         self.obj_type = obj_type
         self.sprite = sprite
@@ -44,6 +46,7 @@ class Obj:
         self.last_input_frame = 0  # for anim
         self.collided_during_hook = False
         self.death_timer = None
+        self.text = text
 
         if bounding_box is None:
             self.bounding_box = (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)
@@ -59,7 +62,7 @@ class Obj:
             self.draw_priority = 3
             self.player_speed = 0
             self.player_dash_timer = 0
-            self.player_hook_speed = 76  # Pixels per sec
+            self.player_hook_speed = 90  # Pixels per sec
             self.player_max_hooks = 5
             self.player_available_hooks = self.player_max_hooks
             self.is_pushable = True
@@ -73,17 +76,19 @@ class Obj:
         if obj_type == ObjType.PlayerHook:
             self.bounding_box = (6, 6, GRID_CELL_SIZE-6, GRID_CELL_SIZE-6)  # Smaller than sprite!
             self.draw_priority = 5
-            self.hook_drag = 1.2  # slowdown per sec
+            self.hook_drag = 1.4  # slowdown per sec
             self.hook_move_back_speed = None  # Set on create
             self.hook_attached_object = None  # Set on contact
 
         # Enemies
         if obj_type == ObjType.EnemyFlying:
             self.draw_priority = 4
-            self.bounding_box = (5, 4, GRID_CELL_SIZE-5, GRID_CELL_SIZE-4)
+            self.bounding_box = (5, 4, GRID_CELL_SIZE-5, GRID_CELL_SIZE)
+            self.enemy_speed = 0.45
         if obj_type == ObjType.EnemyWalking:
             self.draw_priority = 4
             self.bounding_box = (2, 3, GRID_CELL_SIZE-2, GRID_CELL_SIZE-1)
+            self.enemy_speed = 0.35
 
         if obj_type == ObjType.Decor:
             self.collides = False
@@ -110,7 +115,7 @@ class Obj:
             self.collides = False
             self.particle_invert = False
             self.particle_invert_y = False
-            self.draw_priority = 3  # Above world, below characters
+            self.draw_priority = 4
         if obj_type == ObjType.ParticleExplosion:
             self.last_input_frame = pyxel.frame_count
             self.anim_speed = 4
@@ -118,7 +123,12 @@ class Obj:
             self.collides = False
             self.particle_invert = pyxel.rndi(0, 1) == 1
             self.particle_invert_y = pyxel.rndi(0, 1) == 1
-            self.draw_priority = 3  # Above world, below characters
+            self.draw_priority = 2  # Above world, below characters
+
+        if obj_type == ObjType.Text:
+            self.draw_priority = 2  # Above world, below characters
+            self.collides = False
+            self.name = "Tutorial Text"
 
     def __repr__(self):
         pos = int(self.pos_x / GRID_CELL_SIZE), int(self.pos_y / GRID_CELL_SIZE)
@@ -170,6 +180,15 @@ def objs_can_collide(obj_a: Obj, obj_b: Obj) -> bool:
         return False
     if obj_b.collides is False:
         return False
+
+    # Allow rolling into the water (or out of it)
+    if obj_a.obj_type is ObjType.Player and PLAYER_DASH_TIME-0.13 < obj_a.player_dash_timer < PLAYER_DASH_TIME:
+        if obj_b.obj_type is ObjType.Water:
+            return False
+    if obj_b.obj_type is ObjType.Player and PLAYER_DASH_TIME-0.13 < obj_b.player_dash_timer < PLAYER_DASH_TIME:
+        if obj_a.obj_type is ObjType.Water:
+            return False
+
     return True
 
 def collision_obj(obj_a: Obj, obj_b: Obj) -> bool:

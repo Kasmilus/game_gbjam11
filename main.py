@@ -36,6 +36,16 @@ def init():
     game.game.objects.append(player_obj)
     game.game.player_obj = player_obj
 
+    # Tutorial messages
+    game.game.objects.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((2, 4), (0, 0)), text="PRESS A TO HOOK"))
+    game.game.objects.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((4, 1), (1, -1)), text="PRESS B TO ROLL"))
+    game.game.objects.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((6, 1), (1, 0)), text="WHERE TO GO?"))
+    game.game.objects[-1].pos_y += HALF_GRID_CELL
+    game.game.objects.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((3, 5), (3, 0)), text="ROLL WHEN HOOKED = ?"))
+    game.game.objects[-1].pos_y += HALF_GRID_CELL
+    game.game.objects.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((1, 3), (4, -1)), text="PULL AND ROLL ASIDE!"))
+    game.game.objects[-1].pos_y += HALF_GRID_CELL
+
     # Rooms
     for level in room_layouts.ALL_LEVELS:
         room_name = level[0]
@@ -87,8 +97,6 @@ def update():
         game.game.time_since_game_over += FRAME_TIME
         if game.game.return_to_game:
             if game.game.time_since_game_over > GAME_RESTART_TIME:
-                #del game.game.player_obj
-                #del game.game
                 game.game = game_checkpoint
                 game.game.game_state = game.GameState.Game
         elif game.game.time_since_game_over > 1.5 and Controls.any():
@@ -224,6 +232,8 @@ def draw():
                 obj_hook.draw_hook(obj)
             elif obj.obj_type == ObjType.Player:
                 obj_player.draw_player(obj)
+            elif obj.obj_type == ObjType.Text:
+                pyxel.text(obj.pos_x, obj.pos_y, obj.text, resources.COLOR_DARK)
             elif obj.obj_type == ObjType.Checkpoint:
                 # Fire anim once only!
                 if obj.checkpoint_used is False:
@@ -241,9 +251,12 @@ def draw():
                 resources.blt_sprite(obj.get_render_sprite(), obj.pos_x, obj.pos_y, invert=invert, invert_y=invert_y)
 
             if DEBUG_DRAW_COLLIDERS:
+                if obj.obj_type == ObjType.EnemyFlying or obj.obj_type == ObjType.EnemyWalking:
+                    pyxel.line(*obj.get_pos_mid(), *game.game.player_obj.get_pos_mid(), resources.COLOR_DARK)
                 if obj.collides:
                     bbox = obj.get_bbox_world_space()
                     pyxel.rectb(bbox[0], bbox[1], bbox[2]-bbox[0], bbox[3]-bbox[1], 15)
+
 
         # Draw UI
         pos_x = game.game.camera_x

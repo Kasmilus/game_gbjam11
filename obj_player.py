@@ -33,10 +33,10 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
 
     # Check for dash (before hook test!)
     if obj.player_dash_timer <= 0.0:
-        obj.player_speed = 0.8
+        obj.player_speed = PLAYER_SPEED_NORMAL
         if Controls.b(one=True):
-            obj.player_dash_timer = 0.25
-            obj.player_speed = 1.6
+            obj.player_dash_timer = PLAYER_DASH_TIME
+            obj.player_speed = PLAYER_SPEED_DASH
     else:
         obj.player_dash_timer -= FRAME_TIME
 
@@ -95,7 +95,7 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
             hook_pos = (obj.pos_x + obj.last_move_dir[0] * start_pos_offset, obj.pos_y + obj.last_move_dir[1] * start_pos_offset)
             hook = Obj(**resources.ALL_OBJECTS['HOOK'], pos=hook_pos)
             hook.hook_velocity = (obj.last_move_dir[0] * obj.player_hook_speed, obj.last_move_dir[1] * obj.player_hook_speed)
-            hook.hook_move_back_speed = obj.player_hook_speed
+            hook.hook_move_back_speed = obj.player_hook_speed*0.65
             game.game.objects.append(hook)
 
     if Controls.any_dir(one=True):
