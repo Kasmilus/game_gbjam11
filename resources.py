@@ -8,6 +8,7 @@ from game_object import ObjType
 IMAGE_SPLASH = 0
 IMAGE_SPRITES = 1
 IMAGE_UI = 2
+IMAGE_TITLE = 2
 
 SPRITE_UI_BOX = (0, 0)
 SPRITE_UI_HOOK = (0, 2)
@@ -139,6 +140,7 @@ SOUND_HOOK_ATTACH = 2
 SOUND_HOOK_THROW = 6
 SOUND_ENEMY_DEATH_A = 3
 SOUND_ENEMY_DEATH_B = 4
+SOUND_INTRO_DROP = 9
 
 #
 # MUSIC
@@ -180,7 +182,9 @@ def blt_sprite(spritesheet_pos: Tuple[int, int], x: int, y: int, transparent_col
 
 
 def blt_splash(x: int, y: int) -> None:
-    blt(0, y, IMAGE_SPLASH, 0, 0, 160, 144)
+    blt(x, y, IMAGE_SPLASH, 0, 0, 160, 144)
+def blt_title(x: int, y: int) -> None:
+    blt(x, y, IMAGE_TITLE, 0, 6*SPRITE_SIZE, 160, 144)
 
 
 def blt_ui_sprite(spritesheet_pos: Tuple[int, int], size: Tuple[int, int], x: int, y: int, transparent_color=0) -> None:
@@ -196,5 +200,5 @@ def play_music(music: int) -> None:
 
 def play_sound(sound: int) -> None:
     # Use channel 1 for sounds
-    #play(1, sound)
+    play(1, sound)
     pass

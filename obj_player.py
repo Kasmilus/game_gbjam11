@@ -25,6 +25,8 @@ def player_death():
     game.game.player_obj.sprite = resources.SPRITE_PLAYER_DEATH
     game.game.player_obj.player_speed = resources.SPRITE_PLAYER_DEATH_SPEED
 
+    game.game.objects.append(Obj(pos=game.game.player_obj.get_pos(), **resources.ALL_OBJECTS['PARTICLE_EXPLOSION']))
+
 
 def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
     player_current_room = get_room_from_pos((obj.pos_x, obj.pos_y))

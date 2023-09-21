@@ -36,6 +36,7 @@ def update_hook(obj: Obj, destroy_list: List[Obj]) -> None:
             destroy_hook = True
             break
     # Move hook before attached
+    move_vector = None
     if obj.hook_attached_object is None:
         assert obj.hook_velocity is not None
         obj.pos_x += obj.hook_velocity[0] * FRAME_TIME
@@ -85,8 +86,8 @@ def update_hook(obj: Obj, destroy_list: List[Obj]) -> None:
         if obj.hook_attached_object is not None:
             obj.hook_attached_object.is_hooked = False
             if obj.hook_attached_object.obj_type is not ObjType.Player:
-                assert move_vector is not None
-                obj.hook_attached_object.velocity = move_vector[0] * obj.hook_move_back_speed, move_vector[1] * obj.hook_move_back_speed
+                if move_vector is not None:
+                    obj.hook_attached_object.velocity = move_vector[0] * obj.hook_move_back_speed, move_vector[1] * obj.hook_move_back_speed
         game.game.player_obj.player_available_hooks += 1
         assert game.game.player_obj.player_available_hooks <= game.game.player_obj.player_max_hooks
         destroy_list.append(obj)

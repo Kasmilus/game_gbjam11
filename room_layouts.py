@@ -56,18 +56,18 @@ LEVEL_INTRO_A = "155bfn5552\n" \
 
 # Intro - Hook over water, take turns
 LEVEL_INTRO_B = "1555555552\n" \
-          "70[0000000\n" \
-          "70]rrrrrrv\n" \
-          "700tgy0008\n" \
-          "7uhhhhhhh8\n" \
-          "700e000008\n" \
-          "366b0n6664"
+                "70[0000000\n" \
+                "70]rrrrrrv\n" \
+                "700tgy0008\n" \
+                "7uhhhhhhh8\n" \
+                "700e000008\n" \
+                "366b0n6664"
 # Intro - "secret" coin, info about rolling
 LEVEL_INTRO_C = "1555555552\n" \
                 "000000000e\n" \
                 "1555b0n552\n" \
-                "7000000[08\n" \
-                "70[0rrr]s8\n" \
+                "7000000[s8\n" \
+                "70[0rrr]08\n" \
                 "70]000a0q8\n" \
                 "30n6666664"
 # Intro - Hook between rooms
@@ -80,8 +80,8 @@ LEVEL_INTRO_D = "10n5555552\n" \
                 "3666666664"
 # Intro - First enemy
 LEVEL_INTRO_E = "1555555552\n" \
-                "7[0000000c\n" \
-                "7]0wq00qYD\n" \
+                "7[000000Yc\n" \
+                "7]0wq00q0D\n" \
                 "x0000000ev\n" \
                 "ggggggy0d8\n" \
                 "hhhhhhi0a8\n" \

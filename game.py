@@ -21,6 +21,7 @@ class Game:
 
         self.splash_timer: float = 0
         self.press_to_start_timer: float = 0
+        self.played_splash_sound: int = 0
 
         self.camera_x: int = 0
         self.camera_y: int = 0

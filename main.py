@@ -32,7 +32,8 @@ def init():
     game.init_game()
 
     # Start with player to make sure it's updated before anything else
-    player_obj = Obj(pos=get_pos_for_room(cell_pos=(5, 5)), **resources.ALL_OBJECTS['PLAYER'])
+    #player_obj = Obj(pos=get_pos_for_room(cell_pos=(5, 5)), **resources.ALL_OBJECTS['PLAYER'])
+    player_obj = Obj(pos=get_pos_for_room(cell_pos=(5, 5), room_coords=(4, -1)), **resources.ALL_OBJECTS['PLAYER'])
     game.game.objects.append(player_obj)
     game.game.player_obj = player_obj
 
@@ -85,8 +86,16 @@ def update():
         #pyxel.quit()
     if game.game.game_state == game.GameState.Splash:
         game.game.splash_timer += FRAME_TIME
-        if game.game.splash_timer > 1.5:
+        if game.game.splash_timer > 3.0:
             game.game.game_state = game.GameState.PressToStart
+        elif game.game.splash_timer > 1.8:
+            if game.game.played_splash_sound == 1:
+                game.game.played_splash_sound += 1
+                resources.play_sound(resources.SOUND_INTRO_DROP)
+        elif game.game.splash_timer > 0.45:
+            if game.game.played_splash_sound == 0:
+                game.game.played_splash_sound += 1
+                resources.play_sound(resources.SOUND_INTRO_DROP)
     elif game.game.game_state == game.GameState.PressToStart:
         game.game.press_to_start_timer += FRAME_TIME
         if Controls.any():
@@ -97,8 +106,11 @@ def update():
         game.game.time_since_game_over += FRAME_TIME
         if game.game.return_to_game:
             if game.game.time_since_game_over > GAME_RESTART_TIME:
-                game.game = game_checkpoint
+                prev_camera = game.game.camera_x, game.game.camera_y
+                game.game = deepcopy(game_checkpoint)
                 game.game.game_state = game.GameState.Game
+                game.game.camera_x = prev_camera[0]
+                game.game.camera_y = prev_camera[1]
         elif game.game.time_since_game_over > 1.5 and Controls.any():
                 game.game.return_to_game = True
                 game.game.time_since_game_over = 0
@@ -195,11 +207,17 @@ def draw():
     if game.game.game_state == game.GameState.Splash:
         if game.game.splash_timer <= 1:
             y_pos = interp.interp(-144, 0, game.game.splash_timer, 1.0, easing=interp.EasingType.EaseOutBounce)
+            resources.blt_splash(0, y_pos)
+        elif game.game.splash_timer <= 1.5:
+            resources.blt_splash(0, 0)
+        elif game.game.splash_timer <= 2.5:
+            resources.blt_splash(0, 0)
+            y_pos = interp.interp(-144, 0, game.game.splash_timer-1.5, 1.0, easing=interp.EasingType.EaseOutBounce)
+            resources.blt_title(0, y_pos)
         else:
-            y_pos = 0
-        resources.blt_splash(0, y_pos)
+            resources.blt_title(0, 0)
     elif game.game.game_state == game.GameState.PressToStart:
-        resources.blt_splash(0, 0)
+        resources.blt_title(0, 0)
         if game.game.press_to_start_timer < 0.8:
             pyxel.rect(25, 115, 110, 15, resources.COLOR_BACKGROUND)
             pyxel.rectb(25, 115, 110, 15, resources.COLOR_DARK)

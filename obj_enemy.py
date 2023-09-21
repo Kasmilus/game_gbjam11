@@ -27,7 +27,7 @@ def kill_enemy(obj: Obj):
     obj.death_timer = obj.anim_speed * len(obj.sprite)
     game.stop_frames = 3
 
-    if game_object.get_dist_obj(obj, game.game.player_obj) < (GRID_CELL_SIZE + HALF_GRID_CELL):
+    if game_object.get_dist_obj(obj, game.game.player_obj) < GRID_CELL_SIZE:
         obj_player.player_death()
 
 
@@ -43,14 +43,14 @@ def update_enemy_common(obj: Obj, destroy_list: List[Obj]):
             if obj2.obj_type in [ObjType.EnemyFlying, ObjType.EnemyWalking]:
                 if game_object.get_dist_obj(obj, obj2) < (GRID_CELL_SIZE + HALF_GRID_CELL):
                     kill_enemy(obj2)
-        if obj.death_timer is not None:
-            obj.death_timer -= 1
-            if obj.death_timer <= 0:
-                obj.obj_type = ObjType.World
-                obj.collides = False
-                obj.name = "Dead Enemy"
-                obj.draw_priority = 2
-                obj.sprite = obj.sprite[-1]
+    if obj.death_timer is not None:
+        obj.death_timer -= 1
+        if obj.death_timer <= 0:
+            obj.obj_type = ObjType.World
+            obj.collides = False
+            obj.name = "Dead Enemy"
+            obj.draw_priority = 2
+            obj.sprite = obj.sprite[-1]
 
     # Check if should move
     d = (game.game.player_obj.pos_x - obj.pos_x, game.game.player_obj.pos_y - obj.pos_y)
