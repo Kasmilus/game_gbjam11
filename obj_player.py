@@ -27,6 +27,9 @@ def player_death():
 
     game.game.objects.append(Obj(pos=game.game.player_obj.get_pos(), **resources.ALL_OBJECTS['PARTICLE_EXPLOSION']))
 
+    resources.play_sound(resources.SOUND_GAME_OVER, 0)
+    resources.playm(1)
+
 
 def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
     player_current_room = get_room_from_pos((obj.pos_x, obj.pos_y))
@@ -37,8 +40,10 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
     if obj.player_dash_timer <= 0.0:
         obj.player_speed = PLAYER_SPEED_NORMAL
         if Controls.b(one=True):
+            obj.started_roll_hooked = obj.is_hooked
             obj.player_dash_timer = PLAYER_DASH_TIME
             obj.player_speed = PLAYER_SPEED_DASH
+            resources.play_sound(resources.SOUND_ROLL)
     else:
         obj.player_dash_timer -= FRAME_TIME
 
@@ -77,7 +82,10 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
     obj.pos_x += move_dir[0]
     obj.pos_y += move_dir[1]
     if move_dir != (0, 0):
-        obj.last_move_dir = move_dir
+        if move_dir[0] != 0 and move_dir[1] != 0:
+            obj.last_move_dir = move_dir[0], 0
+        else:
+            obj.last_move_dir = move_dir
         if move_dir[0] != 0:
             obj.last_facing_dir_anim = move_dir[0]
 
@@ -99,6 +107,7 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
             hook.hook_velocity = (obj.last_move_dir[0] * obj.player_hook_speed, obj.last_move_dir[1] * obj.player_hook_speed)
             hook.hook_move_back_speed = obj.player_hook_speed*0.65
             game.game.objects.append(hook)
+            resources.play_sound(resources.SOUND_HOOK_THROW)
 
     if Controls.any_dir(one=True):
         obj.last_input_frame = pyxel.frame_count

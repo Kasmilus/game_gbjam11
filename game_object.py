@@ -47,6 +47,7 @@ class Obj:
         self.collided_during_hook = False
         self.death_timer = None
         self.text = text
+        self.started_roll_hooked = False
 
         if bounding_box is None:
             self.bounding_box = (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)
@@ -84,11 +85,11 @@ class Obj:
         if obj_type == ObjType.EnemyFlying:
             self.draw_priority = 4
             self.bounding_box = (5, 4, GRID_CELL_SIZE-5, GRID_CELL_SIZE)
-            self.enemy_speed = 0.45
+            self.enemy_speed = 0.40
         if obj_type == ObjType.EnemyWalking:
             self.draw_priority = 4
             self.bounding_box = (2, 3, GRID_CELL_SIZE-2, GRID_CELL_SIZE-1)
-            self.enemy_speed = 0.35
+            self.enemy_speed = 0.30
 
         if obj_type == ObjType.Decor:
             self.collides = False
@@ -182,12 +183,13 @@ def objs_can_collide(obj_a: Obj, obj_b: Obj) -> bool:
         return False
 
     # Allow rolling into the water (or out of it)
-    if obj_a.obj_type is ObjType.Player and PLAYER_DASH_TIME-0.13 < obj_a.player_dash_timer < PLAYER_DASH_TIME:
-        if obj_b.obj_type is ObjType.Water:
-            return False
-    if obj_b.obj_type is ObjType.Player and PLAYER_DASH_TIME-0.13 < obj_b.player_dash_timer < PLAYER_DASH_TIME:
-        if obj_a.obj_type is ObjType.Water:
-            return False
+    if obj_a.started_roll_hooked or obj_b.started_roll_hooked:
+        if obj_a.obj_type is ObjType.Player and PLAYER_DASH_TIME-0.13 < obj_a.player_dash_timer < PLAYER_DASH_TIME:
+            if obj_b.obj_type is ObjType.Water:
+                return False
+        if obj_b.obj_type is ObjType.Player and PLAYER_DASH_TIME-0.13 < obj_b.player_dash_timer < PLAYER_DASH_TIME:
+            if obj_a.obj_type is ObjType.Water:
+                return False
 
     return True
 

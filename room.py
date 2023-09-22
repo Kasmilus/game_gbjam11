@@ -23,6 +23,7 @@ def create_room(layout: str, room_coords: Tuple[int, int], room_name: str) -> No
         for cell_pos_x, c in enumerate(line):
             pos = get_pos_for_room(cell_pos=(cell_pos_x, cell_pos_y), room_coords=room_coords)
             new_obj = None
+            add_decor = False
 
             if c == '0':
                 continue
@@ -99,7 +100,7 @@ def create_room(layout: str, room_coords: Tuple[int, int], room_name: str) -> No
             elif c == 'p':
                 new_obj = Obj(**ALL_OBJECTS['LARGE_STONE_B'], pos=pos)
                 new_obj.draw_priority = 7
-            elif c == 'k':
+            elif c == '+':
                 new_obj = Obj(**ALL_OBJECTS['LARGE_STONE_C'], pos=pos)
                 new_obj.draw_priority = 7
             elif c == 'l':
@@ -128,31 +129,44 @@ def create_room(layout: str, room_coords: Tuple[int, int], room_name: str) -> No
             elif c == 'Q':
                 new_obj = Obj(**ALL_OBJECTS['FLOWER_Q'], pos=pos)
                 new_obj.anim_speed = 115
+                add_decor = True
             elif c == 'W':
                 new_obj = Obj(**ALL_OBJECTS['FLOWER_W'], pos=pos)
                 new_obj.anim_speed = 94
+                add_decor = True
             elif c == 'E':
                 new_obj = Obj(**ALL_OBJECTS['FLOWER_E'], pos=pos)
                 new_obj.anim_speed = 238
+                add_decor = True
             elif c == 'R':
                 new_obj = Obj(**ALL_OBJECTS['LITTLE_STONE'], pos=pos)
+                add_decor = True
             elif c == 'F':
                 new_obj = Obj(**ALL_OBJECTS['MUSHROOM_A'], pos=pos)
+                add_decor = True
             elif c == 'G':
                 new_obj = Obj(**ALL_OBJECTS['MUSHROOM_B'], pos=pos)
+                add_decor = True
             elif c == 'H':
                 new_obj = Obj(**ALL_OBJECTS['GRASS_H'], pos=pos)
+                add_decor = True
             elif c == 'J':
                 new_obj = Obj(**ALL_OBJECTS['GRASS_J'], pos=pos)
+                add_decor = True
             elif c == 'K':
                 new_obj = Obj(**ALL_OBJECTS['GRASS_K'], pos=pos)
+                add_decor = True
             elif c == 'L':
                 new_obj = Obj(**ALL_OBJECTS['GRASS_L'], pos=pos)
+                add_decor = True
             else:
                 raise Exception(f"Unknown cell type: {c}!")
 
             assert type(new_obj) is Obj
-            game.game.objects.append(new_obj)
+            if add_decor is True:
+                game.game.objects_decor.append(new_obj)
+            else:
+                game.game.all_objects.append(new_obj)
 
 def get_room_from_pos(pos: Tuple[int, int]) -> Tuple[int, int]:
     cell_coord = round(pos[0] / GRID_CELL_SIZE), round(pos[1] / GRID_CELL_SIZE)
@@ -167,5 +181,25 @@ def move_camera_to_new_room(room_coords: Tuple[int, int]) -> None:
     game.game.camera_target_x, game.game.camera_target_y = get_pos_from_room_coords(room_coords)
     game.game.camera_move_timer = 0
 
+
 def get_current_room() -> Tuple[int, int]:
     return get_room_from_pos((game.game.camera_target_x, game.game.camera_target_y))
+
+def update_current_room_objects():
+    # First clear all static objects
+    remove_list = []
+    for obj in game.game.objects:
+        if obj.obj_type not in [ObjType.Player, ObjType.PlayerHook, ObjType.EnemyFlying, ObjType.EnemyWalking]:
+            remove_list.append(obj)
+    for obj in remove_list:
+        game.game.objects.remove(obj)
+
+    # Add objects from nearby rooms
+    current_room = get_current_room()
+    for obj in game.game.all_objects:
+        if obj not in game.game.objects:
+            obj_room = get_room_from_pos(obj.get_pos())
+            if (current_room[0] - 2 <= obj_room[0] <= current_room[0] + 2) and current_room[1] == obj_room[1]:
+                game.game.objects.append(obj)
+            elif (current_room[1] - 2 <= obj_room[1] <= current_room[1] + 2) and current_room[0] == obj_room[0]:
+                game.game.objects.append(obj)

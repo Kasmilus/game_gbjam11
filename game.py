@@ -17,7 +17,9 @@ class Game:
     def __init__(self):
         self.game_state: GameState = GameState.Game
         #self.game_state: GameState = GameState.Splash
-        self.objects: List[Obj] = []
+        self.all_objects: List[Obj] = []  # List of all objects in game
+        self.objects: List[Obj] = []  # List of only objects in current and surrounding rooms
+        self.objects_decor: List[Obj] = []
 
         self.splash_timer: float = 0
         self.press_to_start_timer: float = 0
@@ -42,3 +44,4 @@ def init_game():
     global game_checkpoint
     game = Game()
     game_checkpoint = None
+

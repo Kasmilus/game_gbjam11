@@ -56,10 +56,11 @@ def update_hook(obj: Obj, destroy_list: List[Obj]) -> None:
                 else:
                     obj.hook_attached_object = game.game.player_obj
                 obj.hook_attached_object.is_hooked = True
+                resources.play_sound(resources.SOUND_HOOK_ATTACH)
     else:
         # already attached, move back
-        if obj.hook_move_back_speed > 48:
-            obj.hook_move_back_speed -= 10 * FRAME_TIME
+        if obj.hook_move_back_speed > 52:
+            obj.hook_move_back_speed -= 9 * FRAME_TIME
         hook_move_dir = (game.game.player_obj.pos_x - obj.pos_x,
                          game.game.player_obj.pos_y - obj.pos_y)
         hook_move_dir = get_vector_normalised(hook_move_dir)

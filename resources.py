@@ -50,18 +50,18 @@ ALL_OBJECTS = {
     "PLAYER": {'name': 'Player', "sprite": SPRITE_PLAYER_IDLE, "obj_type": ObjType.Player},
     "HOOK": {'name': 'Hook', 'sprite': [(0, 1), (1, 1), (2, 1), (3, 1)], "obj_type": ObjType.PlayerHook},
 
-    'WALL_CORNER_LU': {'name': 'Wall', "sprite": (4, 7), "obj_type": ObjType.World, 'bounding_box': (2, 2, GRID_CELL_SIZE-2, GRID_CELL_SIZE-2)},
-    'WALL_CORNER_RU': {'name': 'Wall', "sprite": (6, 7), "obj_type": ObjType.World, 'bounding_box': (2, 2, GRID_CELL_SIZE-2, GRID_CELL_SIZE-2)},
-    'WALL_CORNER_LD': {'name': 'Wall', "sprite": (4, 9), "obj_type": ObjType.World, 'bounding_box': (2, 2, GRID_CELL_SIZE-2, GRID_CELL_SIZE-2)},
-    'WALL_CORNER_RD': {'name': 'Wall', "sprite": (6, 9), "obj_type": ObjType.World, 'bounding_box': (2, 2, GRID_CELL_SIZE-2, GRID_CELL_SIZE-2)},
-    'WALL_OPENING_LEFT_TOP': {'name': 'Wall', "sprite": (7, 8), "obj_type": ObjType.World},
-    'WALL_OPENING_LEFT_BOTTOM': {'name': 'Wall', "sprite": (7, 9), "obj_type": ObjType.World},
-    'WALL_OPENING_RIGHT_TOP': {'name': 'Wall', "sprite": (8, 8), "obj_type": ObjType.World},
-    'WALL_OPENING_RIGHT_BOTTOM': {'name': 'Wall', "sprite": (8, 9), "obj_type": ObjType.World},
-    'WALL_OPENING_DOWN_LEFT': {'name': 'Wall', "sprite": (4, 10), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
-    'WALL_OPENING_DOWN_RIGHT': {'name': 'Wall', "sprite": (5, 10), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
-    'WALL_UP': {'name': 'Wall', "sprite": (5, 7), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
-    'WALL_DOWN': {'name': 'Wall', "sprite": (5, 9), "obj_type": ObjType.World, 'bounding_box': (0, 6, GRID_CELL_SIZE, GRID_CELL_SIZE)},
+    'WALL_CORNER_LU': {'name': 'WallH', "sprite": (4, 7), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
+    'WALL_CORNER_RU': {'name': 'WallH', "sprite": (6, 7), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
+    'WALL_CORNER_LD': {'name': 'WallH', "sprite": (4, 9), "obj_type": ObjType.World, 'bounding_box': (0, 4, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
+    'WALL_CORNER_RD': {'name': 'WallH', "sprite": (6, 9), "obj_type": ObjType.World, 'bounding_box': (0, 4, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
+    'WALL_OPENING_LEFT_TOP': {'name': 'Wall', "sprite": (7, 8), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE-6, GRID_CELL_SIZE)},
+    'WALL_OPENING_LEFT_BOTTOM': {'name': 'Wall', "sprite": (7, 9), "obj_type": ObjType.World, 'bounding_box': (0, 2, GRID_CELL_SIZE-6, GRID_CELL_SIZE)},
+    'WALL_OPENING_RIGHT_TOP': {'name': 'Wall', "sprite": (8, 8), "obj_type": ObjType.World, 'bounding_box': (6, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)},
+    'WALL_OPENING_RIGHT_BOTTOM': {'name': 'Wall', "sprite": (8, 9), "obj_type": ObjType.World, 'bounding_box': (6, 2, GRID_CELL_SIZE, GRID_CELL_SIZE)},
+    'WALL_OPENING_DOWN_LEFT': {'name': 'WallH', "sprite": (4, 10), "obj_type": ObjType.World, 'bounding_box': (0, 5, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
+    'WALL_OPENING_DOWN_RIGHT': {'name': 'WallH', "sprite": (5, 10), "obj_type": ObjType.World, 'bounding_box': (0, 5, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
+    'WALL_UP': {'name': 'WallH', "sprite": (5, 7), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
+    'WALL_DOWN': {'name': 'WallH', "sprite": (5, 9), "obj_type": ObjType.World, 'bounding_box': (0, 5, GRID_CELL_SIZE, GRID_CELL_SIZE-4)},
     'WALL_LEFT': {'name': 'Wall', "sprite": (4, 8), "obj_type": ObjType.World, 'bounding_box': (0, 0, GRID_CELL_SIZE-6, GRID_CELL_SIZE)},
     'WALL_RIGHT': {'name': 'Wall', "sprite": (6, 8), "obj_type": ObjType.World, 'bounding_box': (6, 0, GRID_CELL_SIZE, GRID_CELL_SIZE)},
 
@@ -78,10 +78,10 @@ ALL_OBJECTS = {
     'ENEMY_WALKING': {'name': 'Enemy Walking', 'sprite': SPRITE_ENEMY_WALKING_IDLE, "obj_type": ObjType.EnemyWalking, "is_hookable": False},
     'ENEMY_FLYING': {'name': 'Enemy Flying', 'sprite': SPRITE_ENEMY_FLYING_IDLE, "obj_type": ObjType.EnemyFlying, "is_hookable": True},
 
-    'STONE_A': {'name': 'Stone', 'sprite': (0, 5), 'obj_type': ObjType.World, 'is_hookable': True},
-    'STONE_B': {'name': 'Stone', 'sprite': (3, 5), 'obj_type': ObjType.World},
-    'STONE_C': {'name': 'Stone', 'sprite': (4, 5), 'obj_type': ObjType.World},
-    'STONE_D': {'name': 'Stone', 'sprite': (2, 6), 'obj_type': ObjType.World},
+    'STONE_A': {'name': 'Stone', 'sprite': (0, 5), 'obj_type': ObjType.World, 'is_hookable': True, 'bounding_box': (1, 1, GRID_CELL_SIZE-1, GRID_CELL_SIZE-1)},
+    'STONE_B': {'name': 'Stone', 'sprite': (3, 5), 'obj_type': ObjType.World, 'bounding_box': (1, 1, GRID_CELL_SIZE-1, GRID_CELL_SIZE-1)},
+    'STONE_C': {'name': 'Stone', 'sprite': (4, 5), 'obj_type': ObjType.World, 'bounding_box': (1, 1, GRID_CELL_SIZE-1, GRID_CELL_SIZE-1)},
+    'STONE_D': {'name': 'Stone', 'sprite': (2, 6), 'obj_type': ObjType.World, 'bounding_box': (1, 1, GRID_CELL_SIZE-1, GRID_CELL_SIZE-1)},
     'STONE_LARGE_00': {'name': 'LargeStone', 'sprite': (5, 5), 'obj_type': ObjType.World},
     'STONE_LARGE_10': {'name': 'LargeStone', 'sprite': (6, 5), 'obj_type': ObjType.World},
     'STONE_LARGE_01': {'name': 'LargeStone', 'sprite': (5, 6), 'obj_type': ObjType.World},
@@ -95,7 +95,7 @@ ALL_OBJECTS = {
     'DOOR_STANDALONE': {'name': 'Door', 'sprite': (5, 14), 'obj_type': ObjType.Door, 'bounding_box': (0, 0, GRID_CELL_SIZE, GRID_CELL_SIZE - 1)},
 
     'LARGE_TREE_TOP': {'name': 'Large Tree (top)', "sprite": (1, 5), "obj_type": ObjType.World, 'bounding_box': (1, 10, GRID_CELL_SIZE-1, GRID_CELL_SIZE)},
-    'LARGE_TREE_BOTTOM': {'name': 'Large Tree (bottom)', "sprite": (1, 6), "obj_type": ObjType.World},
+    'LARGE_TREE_BOTTOM': {'name': 'Large Tree (bottom)', "sprite": (1, 6), "obj_type": ObjType.World, 'bounding_box': (1, 0, GRID_CELL_SIZE-1, GRID_CELL_SIZE-1)},
     'SMALL_TREE': {'name': 'Small Tree', "sprite": (2, 5), "obj_type": ObjType.World, 'bounding_box': (1, 1, GRID_CELL_SIZE-1, GRID_CELL_SIZE-1)},
     'LARGE_STONE_A': {'name': 'Extra Large Stone 1', "sprite": (5, 5), "obj_type": ObjType.World, 'collides': False},
     'LARGE_STONE_B': {'name': 'Extra Large Stone 2', "sprite": (6, 5), "obj_type": ObjType.World, 'collides': False},
@@ -141,6 +141,10 @@ SOUND_HOOK_THROW = 6
 SOUND_ENEMY_DEATH_A = 3
 SOUND_ENEMY_DEATH_B = 4
 SOUND_INTRO_DROP = 9
+SOUND_OPEN_DOOR = 10
+SOUND_CHECKPOINT = 11
+SOUND_GAME_OVER = 12
+SOUND_ROLL = 13
 
 #
 # MUSIC
@@ -183,6 +187,7 @@ def blt_sprite(spritesheet_pos: Tuple[int, int], x: int, y: int, transparent_col
 
 def blt_splash(x: int, y: int) -> None:
     blt(x, y, IMAGE_SPLASH, 0, 0, 160, 144)
+
 def blt_title(x: int, y: int) -> None:
     blt(x, y, IMAGE_TITLE, 0, 6*SPRITE_SIZE, 160, 144)
 
@@ -198,7 +203,6 @@ def play_music(music: int) -> None:
     pass
 
 
-def play_sound(sound: int) -> None:
-    # Use channel 1 for sounds
-    play(1, sound)
+def play_sound(sound: int, channel: int = 1) -> None:
+    play(channel, sound)
     pass

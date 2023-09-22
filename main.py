@@ -32,20 +32,24 @@ def init():
     game.init_game()
 
     # Start with player to make sure it's updated before anything else
-    #player_obj = Obj(pos=get_pos_for_room(cell_pos=(5, 5)), **resources.ALL_OBJECTS['PLAYER'])
-    player_obj = Obj(pos=get_pos_for_room(cell_pos=(5, 5), room_coords=(4, -1)), **resources.ALL_OBJECTS['PLAYER'])
-    game.game.objects.append(player_obj)
+    player_obj = Obj(pos=get_pos_for_room(cell_pos=(5, 5)), **resources.ALL_OBJECTS['PLAYER'])
+    #player_obj = Obj(pos=get_pos_for_room(cell_pos=(5, 5), room_coords=(4, -1)), **resources.ALL_OBJECTS['PLAYER'])
+    game.game.all_objects.append(player_obj)
     game.game.player_obj = player_obj
 
     # Tutorial messages
-    game.game.objects.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((2, 4), (0, 0)), text="PRESS A TO HOOK"))
-    game.game.objects.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((4, 1), (1, -1)), text="PRESS B TO ROLL"))
-    game.game.objects.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((6, 1), (1, 0)), text="WHERE TO GO?"))
-    game.game.objects[-1].pos_y += HALF_GRID_CELL
-    game.game.objects.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((3, 5), (3, 0)), text="ROLL WHEN HOOKED = ?"))
-    game.game.objects[-1].pos_y += HALF_GRID_CELL
-    game.game.objects.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((1, 3), (4, -1)), text="PULL AND ROLL ASIDE!"))
-    game.game.objects[-1].pos_y += HALF_GRID_CELL
+    game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((2, 4), (0, 0)), text="PRESS A TO HOOK"))
+    game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((4, 1), (1, -1)), text="PRESS B TO ROLL"))
+    game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((6, 1), (1, 0)), text="WHERE TO GO?"))
+    game.game.objects_decor[-1].pos_y += HALF_GRID_CELL
+    game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((3, 5), (3, 0)), text="ROLL WHEN HOOKED = ?"))
+    game.game.objects_decor[-1].pos_y += HALF_GRID_CELL
+    game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((5, 5), (4, -1)), text="HOOK & ROLL ASIDE!"))
+    game.game.objects_decor[-1].pos_y += HALF_GRID_CELL
+    game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((2, 1), (-1, -5)), text="THE END"))
+    game.game.objects_decor[-1].pos_y += HALF_GRID_CELL
+    game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((2, 5), (-1, -5)), text="THANKS FOR PLAYING :)"))
+    game.game.objects_decor[-1].pos_y += HALF_GRID_CELL
 
     # Rooms
     for level in room_layouts.ALL_LEVELS:
@@ -61,6 +65,8 @@ def init():
 
     resources.play_music(resources.MUSIC_A)
 
+    update_current_room_objects()
+
     global game_checkpoint
     game_checkpoint = deepcopy(game.game)
 
@@ -75,6 +81,7 @@ def update():
     # Update camera
     #
     if game.game.camera_x != game.game.camera_target_x or game.game.camera_y != game.game.camera_target_y:
+        update_current_room_objects()
         CAMERA_MOVE_TIME = 1
         game.game.camera_x = interp.interp(game.game.camera_x, game.game.camera_target_x, game.game.camera_move_timer, CAMERA_MOVE_TIME, interp.EasingType.Slerp)
         game.game.camera_y = interp.interp(game.game.camera_y, game.game.camera_target_y, game.game.camera_move_timer, CAMERA_MOVE_TIME, interp.EasingType.Slerp)
@@ -111,6 +118,7 @@ def update():
                 game.game.game_state = game.GameState.Game
                 game.game.camera_x = prev_camera[0]
                 game.game.camera_y = prev_camera[1]
+                resources.play_music(resources.MUSIC_A)
         elif game.game.time_since_game_over > 1.5 and Controls.any():
                 game.game.return_to_game = True
                 game.game.time_since_game_over = 0
@@ -148,15 +156,18 @@ def update():
                 if game_object.get_dist_obj(obj, game.game.player_obj) < GRID_CELL_SIZE:
                     game.game.player_obj.player_collected_coins += 1
                     destroy_list.append(obj)
+                    resources.play_sound(resources.SOUND_PICK_COIN)
             elif obj.obj_type == ObjType.Key:
                 if game_object.get_dist_obj(obj, game.game.player_obj) < GRID_CELL_SIZE:
                     game.game.player_obj.player_collected_keys += 1
                     destroy_list.append(obj)
+                    resources.play_sound(resources.SOUND_PICK_KEY)
             elif obj.obj_type == ObjType.Door:
-                if game_object.get_dist_obj(obj, game.game.player_obj) < GRID_CELL_SIZE:
+                if game_object.get_dist_obj(obj, game.game.player_obj) <= GRID_CELL_SIZE + 8:
                     if game.game.player_obj.player_collected_keys > 0:
                         game.game.player_obj.player_collected_keys -= 1
                         destroy_list.append(obj)
+                        resources.play_sound(resources.SOUND_OPEN_DOOR)
             elif obj.obj_type == ObjType.Checkpoint:
                 if not obj.checkpoint_used:
                     if game_object.get_dist_obj(obj, game.game.player_obj) < GRID_CELL_SIZE + HALF_GRID_CELL:
@@ -165,11 +176,17 @@ def update():
                         game.game.player_obj.player_last_checkpoint_name = obj.checkpoint_name
                         # Save game state
                         game_checkpoint = deepcopy(game.game)
+                        resources.play_sound(resources.SOUND_CHECKPOINT)
             elif obj.obj_type == ObjType.ParticleRun or obj.obj_type == ObjType.ParticleExplosion:
                 obj.particle_lifetime -= 1
                 if obj.particle_lifetime <= 1:
                     destroy_list.append(obj)
                     game.game.player_obj.player_particle_count -= 1
+            elif obj.name == "WallH":
+                if game.game.player_obj.pos_y < obj.pos_y:
+                    obj.draw_priority = 7
+                else:
+                    obj.draw_priority = 1
 
             if obj.velocity is not None and obj.velocity != (0, 0):
                 vel_sign_x = utils.sign(obj.velocity[0])
@@ -194,6 +211,8 @@ def update():
         #
         for obj in destroy_list:
             game.game.objects.remove(obj)
+            if obj in game.game.all_objects:
+                game.game.all_objects.remove(obj)
         for obj in game.game.objects:
             obj.collisions = []
 
@@ -240,6 +259,8 @@ def draw():
         draw_list = []
         for obj in game.game.objects:
             draw_list.append(obj)
+        for obj in game.game.objects_decor:
+            draw_list.append(obj)
         draw_list.sort(key=lambda x: x.draw_priority)
 
         #
@@ -269,8 +290,8 @@ def draw():
                 resources.blt_sprite(obj.get_render_sprite(), obj.pos_x, obj.pos_y, invert=invert, invert_y=invert_y)
 
             if DEBUG_DRAW_COLLIDERS:
-                if obj.obj_type == ObjType.EnemyFlying or obj.obj_type == ObjType.EnemyWalking:
-                    pyxel.line(*obj.get_pos_mid(), *game.game.player_obj.get_pos_mid(), resources.COLOR_DARK)
+                #if obj.obj_type == ObjType.EnemyFlying or obj.obj_type == ObjType.EnemyWalking:
+                #    pyxel.line(*obj.get_pos_mid(), *game.game.player_obj.get_pos_mid(), resources.COLOR_DARK)
                 if obj.collides:
                     bbox = obj.get_bbox_world_space()
                     pyxel.rectb(bbox[0], bbox[1], bbox[2]-bbox[0], bbox[3]-bbox[1], 15)

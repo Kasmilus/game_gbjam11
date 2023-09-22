@@ -30,6 +30,11 @@ def kill_enemy(obj: Obj):
     if game_object.get_dist_obj(obj, game.game.player_obj) < GRID_CELL_SIZE:
         obj_player.player_death()
 
+    if pyxel.rndi(0, 1) == 0:
+        resources.play_sound(resources.SOUND_ENEMY_DEATH_A)
+    else:
+        resources.play_sound(resources.SOUND_ENEMY_DEATH_B)
+
 
 def update_enemy_common(obj: Obj, destroy_list: List[Obj]):
     if game_object.collision_obj(obj, game.game.player_obj):
