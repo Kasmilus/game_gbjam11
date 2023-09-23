@@ -15,8 +15,8 @@ class GameState(Enum):
 
 class Game:
     def __init__(self):
-        self.game_state: GameState = GameState.Game
-        #self.game_state: GameState = GameState.Splash
+        #self.game_state: GameState = GameState.Game
+        self.game_state: GameState = GameState.Splash
         self.all_objects: List[Obj] = []  # List of all objects in game
         self.objects: List[Obj] = []  # List of only objects in current and surrounding rooms
         self.objects_decor: List[Obj] = []
@@ -30,6 +30,7 @@ class Game:
         self.camera_target_x: int = 0
         self.camera_target_y: int = 0
         self.camera_move_timer: float = 0
+        self.cam_shake_timer: float = 0
 
         self.player_obj: Obj = None  # Reference to the player
 

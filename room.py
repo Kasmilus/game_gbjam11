@@ -78,6 +78,31 @@ def create_room(layout: str, room_coords: Tuple[int, int], room_name: str) -> No
             elif c == 'k':
                 new_obj = Obj(**ALL_OBJECTS['WATER_RIGHT'], pos=pos)
 
+            elif c == '<':
+                new_obj = Obj(**ALL_OBJECTS['RIVER_H_LEFT_END'], pos=pos)
+            elif c == '>':
+                new_obj = Obj(**ALL_OBJECTS['RIVER_H_RIGHT_END'], pos=pos)
+            elif c == '?':
+                new_obj = Obj(**ALL_OBJECTS['RIVER_H'], pos=pos)
+            elif c == ',':
+                new_obj = Obj(**ALL_OBJECTS['RIVER_V_UP_END'], pos=pos)
+            elif c == '.':
+                new_obj = Obj(**ALL_OBJECTS['RIVER_V_DOWN_END'], pos=pos)
+            elif c == '/':
+                new_obj = Obj(**ALL_OBJECTS['RIVER_V'], pos=pos)
+            elif c == '{':
+                new_obj = Obj(**ALL_OBJECTS['RIVER_CORNER_LU'], pos=pos)
+            elif c == '}':
+                new_obj = Obj(**ALL_OBJECTS['RIVER_CORNER_RU'], pos=pos)
+            elif c == ':':
+                new_obj = Obj(**ALL_OBJECTS['RIVER_CORNER_LD'], pos=pos)
+            elif c == ';':
+                new_obj = Obj(**ALL_OBJECTS['RIVER_CORNER_RD'], pos=pos)
+            elif c == '(':
+                new_obj = Obj(**ALL_OBJECTS['RIVER_CORNER_L'], pos=pos)
+            elif c == ')':
+                new_obj = Obj(**ALL_OBJECTS['RIVER_CORNER_R'], pos=pos)
+
             elif c == 'q':
                 new_obj = Obj(**ALL_OBJECTS['STONE_A'], pos=pos)
             elif c == 'w':

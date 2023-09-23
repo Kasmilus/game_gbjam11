@@ -30,6 +30,10 @@ def player_death():
     resources.play_sound(resources.SOUND_GAME_OVER, 0)
     resources.playm(1)
 
+    game.game.cam_shake_timer = 0.7
+    game.stop_frames = 30
+    resources.flip_colors()
+
 
 def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
     player_current_room = get_room_from_pos((obj.pos_x, obj.pos_y))
@@ -43,7 +47,8 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
             obj.started_roll_hooked = obj.is_hooked
             obj.player_dash_timer = PLAYER_DASH_TIME
             obj.player_speed = PLAYER_SPEED_DASH
-            resources.play_sound(resources.SOUND_ROLL)
+            if Controls.any_dir():
+                resources.play_sound(resources.SOUND_ROLL)
     else:
         obj.player_dash_timer -= FRAME_TIME
 
@@ -105,7 +110,7 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
             hook_pos = (obj.pos_x + obj.last_move_dir[0] * start_pos_offset, obj.pos_y + obj.last_move_dir[1] * start_pos_offset)
             hook = Obj(**resources.ALL_OBJECTS['HOOK'], pos=hook_pos)
             hook.hook_velocity = (obj.last_move_dir[0] * obj.player_hook_speed, obj.last_move_dir[1] * obj.player_hook_speed)
-            hook.hook_move_back_speed = obj.player_hook_speed*0.65
+            hook.hook_move_back_speed = obj.player_hook_speed*0.62
             game.game.objects.append(hook)
             resources.play_sound(resources.SOUND_HOOK_THROW)
 

@@ -63,8 +63,8 @@ class Obj:
             self.draw_priority = 3
             self.player_speed = 0
             self.player_dash_timer = 0
-            self.player_hook_speed = 90  # Pixels per sec
-            self.player_max_hooks = 5
+            self.player_hook_speed = 110  # Pixels per sec
+            self.player_max_hooks = 1
             self.player_available_hooks = self.player_max_hooks
             self.is_pushable = True
             self.anim_speed = 90  # 1.5sec per frame
@@ -86,10 +86,14 @@ class Obj:
             self.draw_priority = 4
             self.bounding_box = (5, 4, GRID_CELL_SIZE-5, GRID_CELL_SIZE)
             self.enemy_speed = 0.40
+            self.enemy_last_path_point = None
+            self.enemy_reached_last_pathpoint = True
         if obj_type == ObjType.EnemyWalking:
             self.draw_priority = 4
-            self.bounding_box = (2, 3, GRID_CELL_SIZE-2, GRID_CELL_SIZE-1)
+            self.bounding_box = (3, 3, GRID_CELL_SIZE-3, GRID_CELL_SIZE-1)
             self.enemy_speed = 0.30
+            self.enemy_last_path_point = None
+            self.enemy_reached_last_pathpoint = True
 
         if obj_type == ObjType.Decor:
             self.collides = False
@@ -137,8 +141,14 @@ class Obj:
 
     def get_pos(self) -> Tuple[int, int]:
         return self.pos_x, self.pos_y
+
     def get_pos_mid(self) -> Tuple[int, int]:
         return self.pos_x + HALF_GRID_CELL, self.pos_y + HALF_GRID_CELL
+
+    def get_cell(self) -> Tuple[int, int]:
+        mid_pos = self.get_pos()
+        return int(mid_pos[0]/GRID_CELL_SIZE), int(mid_pos[1]/GRID_CELL_SIZE)
+
     def get_bbox_world_space(self) -> Tuple[int, int, int, int]:
         return self.pos_x + self.bounding_box[0], self.pos_y + self.bounding_box[1], self.pos_x + self.bounding_box[2], self.pos_y + self.bounding_box[3]
 

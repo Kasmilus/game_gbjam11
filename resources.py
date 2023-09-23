@@ -75,6 +75,19 @@ ALL_OBJECTS = {
     'WATER_RIGHT': {'name': 'Water', "sprite": (3, 8), "obj_type": ObjType.Water},
     'WATER': {'name': 'Water', "sprite": (1, 9), "obj_type": ObjType.Water},
 
+    'RIVER_H': {'name': 'Water', "sprite": (11, 7), "obj_type": ObjType.Water},
+    'RIVER_H_RIGHT_END': {'name': 'Water', "sprite": (12, 7), "obj_type": ObjType.Water},
+    'RIVER_H_LEFT_END': {'name': 'Water', "sprite": (13, 7), "obj_type": ObjType.Water},
+    'RIVER_V': {'name': 'Water', "sprite": (11, 8), "obj_type": ObjType.Water},
+    'RIVER_V_UP_END': {'name': 'Water', "sprite": (12, 8), "obj_type": ObjType.Water},
+    'RIVER_V_DOWN_END': {'name': 'Water', "sprite": (13, 8), "obj_type": ObjType.Water},
+    'RIVER_CORNER_LU': {'name': 'Water', "sprite": (14, 7), "obj_type": ObjType.Water},
+    'RIVER_CORNER_RU': {'name': 'Water', "sprite": (15, 7), "obj_type": ObjType.Water},
+    'RIVER_CORNER_LD': {'name': 'Water', "sprite": (14, 8), "obj_type": ObjType.Water},
+    'RIVER_CORNER_RD': {'name': 'Water', "sprite": (15, 8), "obj_type": ObjType.Water},
+    'RIVER_CORNER_L': {'name': 'Water', "sprite": (14, 9), "obj_type": ObjType.Water},
+    'RIVER_CORNER_R': {'name': 'Water', "sprite": (15, 9), "obj_type": ObjType.Water},
+
     'ENEMY_WALKING': {'name': 'Enemy Walking', 'sprite': SPRITE_ENEMY_WALKING_IDLE, "obj_type": ObjType.EnemyWalking, "is_hookable": False},
     'ENEMY_FLYING': {'name': 'Enemy Flying', 'sprite': SPRITE_ENEMY_FLYING_IDLE, "obj_type": ObjType.EnemyFlying, "is_hookable": True},
 
@@ -199,7 +212,7 @@ def blt_ui_sprite(spritesheet_pos: Tuple[int, int], size: Tuple[int, int], x: in
 
 def play_music(music: int) -> None:
     # In-game music should leave channel 1 for sounds
-    #playm(music, loop=True)
+    playm(music, loop=True)
     pass
 
 

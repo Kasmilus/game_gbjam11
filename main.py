@@ -26,13 +26,14 @@ import obj_enemy
 
 
 def init():
-    pyxel.init(160, 144, title="The Fable of Helga", fps=FPS, display_scale=3)
+    pyxel.init(160, 144, title="The Tale of Helga: A Hook to the Future", fps=FPS, display_scale=3)
     pyxel.load("assets/my_resource.pyxres", image=True, tilemap=False, sound=True, music=True)
 
     game.init_game()
 
     # Start with player to make sure it's updated before anything else
     player_obj = Obj(pos=get_pos_for_room(cell_pos=(5, 5)), **resources.ALL_OBJECTS['PLAYER'])
+    #player_obj = Obj(pos=get_pos_for_room(cell_pos=(3, 3), room_coords=(2, 0)), **resources.ALL_OBJECTS['PLAYER'])
     #player_obj = Obj(pos=get_pos_for_room(cell_pos=(5, 5), room_coords=(4, -1)), **resources.ALL_OBJECTS['PLAYER'])
     game.game.all_objects.append(player_obj)
     game.game.player_obj = player_obj
@@ -41,7 +42,7 @@ def init():
     game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((2, 4), (0, 0)), text="PRESS A TO HOOK"))
     game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((4, 1), (1, -1)), text="PRESS B TO ROLL"))
     game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((6, 1), (1, 0)), text="WHERE TO GO?"))
-    game.game.objects_decor[-1].pos_y += HALF_GRID_CELL
+    #game.game.objects_decor[-1].pos_y += HALF_GRID_CELL
     game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((3, 5), (3, 0)), text="ROLL WHEN HOOKED = ?"))
     game.game.objects_decor[-1].pos_y += HALF_GRID_CELL
     game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((5, 5), (4, -1)), text="HOOK & ROLL ASIDE!"))
@@ -77,6 +78,7 @@ def update():
 
     if game.game.stop_frames > 0:
         return
+
     #
     # Update camera
     #
@@ -88,6 +90,13 @@ def update():
         game.game.camera_move_timer += FRAME_TIME
         pyxel.camera(game.game.camera_x, game.game.camera_y)
         return  # Don#t update anythin when moving camera
+    else:
+        if game.game.cam_shake_timer > 0.0:
+            game.game.cam_shake_timer -= FRAME_TIME
+            str = max(1, int(game.game.cam_shake_timer*10))
+            pyxel.camera(game.game.camera_x+pyxel.rndi(-str, str), game.game.camera_y+pyxel.rndi(-str, str))
+        else:
+            pyxel.camera(game.game.camera_x, game.game.camera_y)
 
     #if pyxel.btn(pyxel.KEY_Q):
         #pyxel.quit()
@@ -153,21 +162,24 @@ def update():
             elif obj.obj_type == ObjType.EnemyWalking:
                 obj_enemy.update_enemy_flying(obj, destroy_list)
             elif obj.obj_type == ObjType.Coin:
-                if game_object.get_dist_obj(obj, game.game.player_obj) < GRID_CELL_SIZE:
+                if game_object.get_dist_obj(obj, game.game.player_obj) < HALF_GRID_CELL+2:
                     game.game.player_obj.player_collected_coins += 1
                     destroy_list.append(obj)
                     resources.play_sound(resources.SOUND_PICK_COIN)
+                    game.game.cam_shake_timer = 0.01
             elif obj.obj_type == ObjType.Key:
                 if game_object.get_dist_obj(obj, game.game.player_obj) < GRID_CELL_SIZE:
                     game.game.player_obj.player_collected_keys += 1
                     destroy_list.append(obj)
                     resources.play_sound(resources.SOUND_PICK_KEY)
+                    game.game.cam_shake_timer = 0.01
             elif obj.obj_type == ObjType.Door:
                 if game_object.get_dist_obj(obj, game.game.player_obj) <= GRID_CELL_SIZE + 8:
                     if game.game.player_obj.player_collected_keys > 0:
                         game.game.player_obj.player_collected_keys -= 1
                         destroy_list.append(obj)
                         resources.play_sound(resources.SOUND_OPEN_DOOR)
+                        game.game.cam_shake_timer = 0.01
             elif obj.obj_type == ObjType.Checkpoint:
                 if not obj.checkpoint_used:
                     if game_object.get_dist_obj(obj, game.game.player_obj) < GRID_CELL_SIZE + HALF_GRID_CELL:
@@ -290,8 +302,8 @@ def draw():
                 resources.blt_sprite(obj.get_render_sprite(), obj.pos_x, obj.pos_y, invert=invert, invert_y=invert_y)
 
             if DEBUG_DRAW_COLLIDERS:
-                #if obj.obj_type == ObjType.EnemyFlying or obj.obj_type == ObjType.EnemyWalking:
-                #    pyxel.line(*obj.get_pos_mid(), *game.game.player_obj.get_pos_mid(), resources.COLOR_DARK)
+                if obj.obj_type == ObjType.EnemyFlying or obj.obj_type == ObjType.EnemyWalking:
+                    pyxel.line(*obj.get_pos_mid(), *game.game.player_obj.get_pos_mid(), resources.COLOR_DARK)
                 if obj.collides:
                     bbox = obj.get_bbox_world_space()
                     pyxel.rectb(bbox[0], bbox[1], bbox[2]-bbox[0], bbox[3]-bbox[1], 15)

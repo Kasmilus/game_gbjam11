@@ -5,6 +5,9 @@
 # zxvbn - left opening, cv - right opening, bn - up or down opening
 # qwer - stones (q hookable)
 # tyui - water corners, @ - water middle, ghjk - water sides,
+# <?> - river hor
+# ,/. - river vert
+# {}:; - LU RU LD RD corner connectors
 
 # [] - Large tree (top/bottom)
 # # - small tree
@@ -28,79 +31,63 @@ FRAME = "1555555552\n" \
         "7000000008\n" \
         "3666666664"
 
-ROOM_LAYOUT_TEST = "15555f5552\n" \
-                   "7dT0000qs8\n" \
-                   "7T00000w08\n" \
-                   "z00000Y0Tc\n" \
-                   "0s00000000\n" \
-                   "xa0e0000rv\n" \
-                   "366b0n6664"
-
-ROOM_DECOR_TEST = "0000000000\n" \
-                  "000000R000\n" \
-                  "000Q0W0000\n" \
-                  "000000E000\n" \
-                  "00FG000LW0\n" \
-                  "0000HJK000\n" \
-                  "0000000000"
-
 
 # Intro - hook over water
 LEVEL_INTRO_A = "155bfn5552\n" \
-                "7[0a000Kd8\n" \
-                "7]00KJ00#8\n" \
+                "7[Ja000Kd8\n" \
+                "7]G0KJ00#8\n" \
                 "7tggggggy8\n" \
                 "7uhhhhhhi8\n" \
-                "700Q0000R8\n" \
+                "7L0Q00K0R8\n" \
                 "3666666664"
 
 # Intro - Hook over water, take turns
-LEVEL_INTRO_B = "1555555552\n" \
-                "70[0000000\n" \
-                "70]wn55552\n" \
-                "700tgy0008\n" \
-                "7uhhhhhhh8\n" \
-                "700e000008\n" \
+LEVEL_INTRO_B = "1555555555\n" \
+                "70[H0000R0\n" \
+                "7R]wn55552\n" \
+                "700tgy0E08\n" \
+                "7<?{h}??>8\n" \
+                "7L0e00KK08\n" \
                 "366b0n6664"
 # Intro - "secret" coin, info about rolling
-LEVEL_INTRO_C = "1555555552\n" \
-                "000000000e\n" \
+LEVEL_INTRO_C = "5555555552\n" \
+                "0KQ000000e\n" \
                 "1555b0n552\n" \
-                "7000000[s8\n" \
-                "7[00e#r]08\n" \
-                "7]0000a0q8\n" \
-                "3b0n666664"
+                "7H00W00[s8\n" \
+                "7[00e#r]L8\n" \
+                "7]00KLa0q8\n" \
+                "3bJn666664"
 # Intro - Hook between rooms
 LEVEL_INTRO_D = "1b0n555552\n" \
-                "7000r00008\n" \
-                "7w000#0#08\n" \
+                "700Kr00008\n" \
+                "7wE00#0#L8\n" \
                 "70000w000c\n" \
-                "7e[00000tg\n" \
-                "70]00000uh\n" \
+                "7e[00K00tg\n" \
+                "70]W00L0uh\n" \
                 "3666666666"
 # Intro - First enemy
 LEVEL_INTRO_E = "1555555552\n" \
-                "7[000000Yc\n" \
-                "7]0wq00q0D\n" \
-                "z0000000ev\n" \
-                "ggggggy0d8\n" \
+                "7[0Y00E0Kc\n" \
+                "7]0w#00r0D\n" \
+                "z0Q00H00n2\n" \
+                "ggggggyLd8\n" \
                 "hhhhhhi0a8\n" \
                 "6666666664"
 # Intro - Roll when hooking
 LEVEL_INTRO_F = "1555555555\n" \
-                "zwty000tgg\n" \
-                "00jk00wj@@\n" \
-                "xejk000j@@\n" \
+                "zwtyr00tgg\n" \
+                "00jk0WLj@@\n" \
+                "xejk0Q0j@@\n" \
                 "7[uirs#uhh\n" \
-                "7]00000000\n" \
+                "7]H00000L0\n" \
                 "3666666664"
 
 LEVEL_INTRO_G = "5552001552\n" \
-                "gyq80070w8\n" \
-                "@k08007d08\n" \
-                "@kn4003b08\n" \
-                "hi00000[08\n" \
-                "000#000]08\n" \
+                "gyq80L70w8\n" \
+                "@kG8K07dG8\n" \
+                "@kn40J3bK8\n" \
+                "hi00Q00[08\n" \
+                "000#0L0]E8\n" \
                 "3666666664"
 LEVEL_INTRO_G_SECRET = "0000000000\n" \
                        "00s0000000\n" \
@@ -112,149 +99,149 @@ LEVEL_INTRO_G_SECRET = "0000000000\n" \
 
 
 # Intro - Pull Enemies to kill them
-LEVEL_INTRO_H = "1b000000n2\n" \
-                "70[00[e#T8\n" \
-                "70]00]0008\n" \
-                "7r00000w08\n" \
+LEVEL_INTRO_H = "1b00J0K0n2\n" \
+                "7Q[00[e#T8\n" \
+                "70]J0]0008\n" \
+                "7r000L0wK8\n" \
                 "1bfn555408\n" \
-                "7s0ea00008\n" \
+                "7sLea00008\n" \
                 "366400n664"
 
 # Intro - some space before first main challenge
-LEVEL_INTRO_I = "155b00n552\n" \
-                "7w0000q0[8\n" \
-                "7000[0#s]8\n" \
-                "70[0]00e08\n" \
-                "70]0000[08\n" \
-                "7#00000]08\n" \
-                "3b000000n4"
+LEVEL_INTRO_I = "155b0Qn552\n" \
+                "7w0K00qs[8\n" \
+                "70K0[0#0]8\n" \
+                "7H[0]0Ke08\n" \
+                "70]0L0r[L8\n" \
+                "7#0Q000]08\n" \
+                "3bL00000n4"
 
-# Level One - small labyrinth(5 rooms?) with simple enemies spread out
+# Level One - small labyrinth with simple enemies spread out
 LEVEL_ONE_A = "155b00n552\n" \
-              "7a00000ws8\n" \
-              "7000000rq8\n" \
-              "z000000q08\n" \
-              "@@@@0@@@@8\n" \
-              "x000000008\n" \
+              "7a000W0ws8\n" \
+              "700K000rq8\n" \
+              "z0W0L00q0c\n" \
+              "???>0<????\n" \
+              "xK00000H0v\n" \
               "366b00n664"
 LEVEL_ONE_B = "1555555552\n" \
-              "z0000000d8\n" \
+              "z00000H0d8\n" \
               "D00w0Y00T8\n" \
-              "x000000008\n" \
-              "700e00#008\n" \
-              "7000000008\n" \
+              "x00J000E08\n" \
+              "700e00#0K8\n" \
+              "7K0K000R08\n" \
               "366b00n664"
 LEVEL_ONE_C = "1555555552\n" \
-              "70000e00ac\n" \
-              "7[00000000\n" \
+              "7K0L0e0E0c\n" \
+              "7[00W0H00K\n" \
               "7]0n555552\n" \
-              "700w#00008\n" \
-              "7000000r08\n" \
-              "3666b0nb08"
+              "70K0#0J008\n" \
+              "7a00L00v08\n" \
+              "3666b0n4K8"
 LEVEL_ONE_D = "1555b0nb08\n" \
-              "7dq000@@08\n" \
+              "7dq00K<>08\n" \
               "15555b0008\n" \
-              "z00000000c\n" \
-              "D000T000@@\n" \
-              "x00000000v\n" \
+              "zK00HK000c\n" \
+              "D000T000<?\n" \
+              "x0E000H00v\n" \
               "3666666664"
 
 # Level Two - Open sided meadows
 
-LEVEL_TWO_A = "000000#008\n" \
-              "00T0000008\n" \
+LEVEL_TWO_A = "K000E0#008\n" \
+              "00T00000R8\n" \
               "00tgggy008\n" \
               "0[uhhhi00c\n" \
-              "0]00000000\n" \
-              "00000000av\n" \
+              "0]00L00000\n" \
+              "00J000H0av\n" \
               "6666666664"
-LEVEL_TWO_B = "70000000e0\n" \
-              "70#0000[00\n" \
-              "7000000]00\n" \
-              "7000000000\n" \
-              "15555b0000\n" \
-              "7d0Y000000\n" \
+LEVEL_TWO_B = "7QK00000e0\n" \
+              "7K#J0H0[00\n" \
+              "7LJKL00]K0\n" \
+              "70G000G000\n" \
+              "15555b00R0\n" \
+              "7d0Y00E000\n" \
               "6666666666"
 LEVEL_TWO_C = "15bfn55555\n" \
-              "700T000000\n" \
-              "7000000[00\n" \
-              "7000000]00\n" \
-              "700000000q\n" \
-              "70#0000000\n" \
+              "7H0T0000G0\n" \
+              "7000K00[00\n" \
+              "700KL00]K0\n" \
+              "700J00000q\n" \
+              "70#000J000\n" \
               "70000000#0"
 LEVEL_TWO_D = "5555555552\n" \
               "000000q[s8\n" \
-              "000Y000]08\n" \
-              "000000#0q8\n" \
-              "0000000008\n" \
-              "0000w00008\n" \
-              "0000000008"
+              "H00Y0E0]08\n" \
+              "0000J0#0q8\n" \
+              "0W00000008\n" \
+              "L000w00L08\n" \
+              "00000K0008"
 
 
 # Level Three - 9 rooms, main challange, 2 secrets in there
 LEVEL_THREE_A = "1555b0n552\n" \
-                "7000000008\n" \
+                "700L00H008\n" \
                 "zr000a0[08\n" \
-                "000[000]08\n" \
-                "x00]000ty8\n" \
-                "7#00000ui8\n" \
+                "000[W00]J8\n" \
+                "xK0]000ty8\n" \
+                "7#0000Kui8\n" \
                 "36b0n66664"
 LEVEL_THREE_B = "1555b0n552\n" \
-                "z0000000T8\n" \
-                "@@00152008\n" \
-                "@@007Y8008\n" \
-                "@@00z0c0[8\n" \
-                "x0000000]8\n" \
+                "70J00000T8\n" \
+                "zw00152008\n" \
+                "?>007Y8008\n" \
+                "x#00z0c0[8\n" \
+                "7L000W00]8\n" \
                 "3666b0n664"
 LEVEL_THREE_C = "1555555552\n" \
-                "00e00000#8\n" \
+                "Q00e0L0#08\n" \
                 "0w0000Y0d8\n" \
-                "00000[00w8\n" \
+                "00KH0[0Rw8\n" \
                 "x0000]00#8\n" \
-                "7000000r08\n" \
+                "700r00JH08\n" \
                 "3666b0n664"
 LEVEL_THREE_D = "1555555525\n" \
-                "z000000s80\n" \
-                "000v016640\n" \
-                "000807w000\n" \
+                "z0HJ00Ks80\n" \
+                "0000016640\n" \
+                "Q00v07w0L0\n" \
                 "00w8qz000v\n" \
-                "x00800[008\n" \
-                "3664@@]n64"
+                "xK0800[0E8\n" \
+                "3664ty]n64"
 LEVEL_THREE_E = "1555555552\n" \
-                "7000r00[0c\n" \
-                "70w0000]00\n" \
-                "7#00000000\n" \
-                "700T0[0e00\n" \
-                "700a0]000v\n" \
+                "7KW0r00[Kc\n" \
+                "70w0000]a0\n" \
+                "7#00L0W00L\n" \
+                "70TJ0[0eJ0\n" \
+                "70000]00Hv\n" \
                 "366bfn6664"
 LEVEL_THREE_F = "1552015552\n" \
-                "7008070008\n" \
-                "7008036668\n" \
-                "7008T@@@@@\n" \
-                "7008015552\n" \
-                "7008070008\n" \
-                "3664f36664"
-LEVEL_THREE_G = "155b0n5552\n" \
-                "7#00000e[8\n" \
-                "7w[00#00]8\n" \
-                "7[]000[0[8\n" \
-                "7]r0#0]q]8\n" \
-                "7000000008\n" \
+                "7E080700L8\n" \
+                "7J08036664\n" \
+                "70G8T<????\n" \
+                "7L08015552\n" \
+                "7K0807KL08\n" \
+                "7668f36664"
+LEVEL_THREE_G = "15540n5552\n" \
+                "7#JH000e[8\n" \
+                "70[00#0Q]8\n" \
+                "7[]r0W[0[8\n" \
+                "7]R0#0]q]8\n" \
+                "7w00000JL8\n" \
                 "3666666664"
-LEVEL_THREE_H = "155b@@n552\n" \
+LEVEL_THREE_H = "155buin552\n" \
                 "7sw0000[#8\n" \
-                "70v0000]0c\n" \
-                "70c0[00000\n" \
+                "7Kv00E0]0c\n" \
+                "7Hc0[00K00\n" \
                 "7[op]00w0v\n" \
-                "7]+ld00008\n" \
+                "7]+ld0J0K8\n" \
                 "3666666664"
-LEVEL_THREE_I = "155b@@n552\n" \
-                "7@@@@@@@@8\n" \
-                "z@@@@@@@@c\n" \
-                "@@@0000@@@\n" \
-                "x@@a00s@@v\n" \
-                "7@@@@@@@@8\n" \
-                "366b@@n664"
+LEVEL_THREE_I = "155bjkn552\n" \
+                "7t;?{}?:y8\n" \
+                "zjkK00Wjkc\n" \
+                "?(k0G00j)?\n" \
+                "xjka0Lsjkv\n" \
+                "7u}?:;?{i8\n" \
+                "366bjkn664"
 
 ALL_LEVELS = [
     (
@@ -268,7 +255,7 @@ ALL_LEVELS = [
         [LEVEL_INTRO_B]  # All layouts for that level
     ),
     (
-        "C",
+        "THE GARDEN",
         (1, -1),  # Location in the world
         [LEVEL_INTRO_C]  # All layouts for that level
     ),
@@ -278,7 +265,7 @@ ALL_LEVELS = [
         [LEVEL_INTRO_D]  # All layouts for that level
     ),
     (
-        "E",
+        "THE GATE",
         (2, 0),  # Location in the world
         [LEVEL_INTRO_E]  # All layouts for that level
     ),
@@ -293,7 +280,7 @@ ALL_LEVELS = [
         [LEVEL_INTRO_G, LEVEL_INTRO_G_SECRET]  # All layouts for that level
     ),
     (
-        "H",
+        "THE ORCHARD",
         (4, -1),  # Location in the world
         [LEVEL_INTRO_H]  # All layouts for that level
     ),
@@ -305,7 +292,7 @@ ALL_LEVELS = [
 
     # Level 1
     (
-        "LVL1",
+        "RIVERSIDE",
         (4, -3),  # Location in the world
         [LEVEL_ONE_A]  # All layouts for that level
     ),
@@ -315,7 +302,7 @@ ALL_LEVELS = [
         [LEVEL_ONE_B]  # All layouts for that level
     ),
     (
-        "LVL1_C",
+        "WILLOW TREE",
         (3, -4),  # Location in the world
         [LEVEL_ONE_C]  # All layouts for that level
     ),
@@ -349,47 +336,47 @@ ALL_LEVELS = [
 
     # Level 3
     (
-        "POND - ENTRANCE",
+        "LOWER LAKE",
         (1, -5),  # Location in the world
         [LEVEL_THREE_A]  # All layouts for that level
     ),
     (
-        "POND",
+        "LAKE",
         (1, -6),  # Location in the world
         [LEVEL_THREE_B]  # All layouts for that level
     ),
     (
-        "POND",
+        "LAKE",
         (1, -7),  # Location in the world
         [LEVEL_THREE_C]  # All layouts for that level
     ),
     (
-        "UPPER POND",
+        "UPPER LAKE",
         (0, -7),  # Location in the world
         [LEVEL_THREE_D]  # All layouts for that level
     ),
     (
-        "POND",
+        "LAKE",
         (-1, -7),  # Location in the world
         [LEVEL_THREE_E]  # All layouts for that level
     ),
     (
-        "POND",
+        "LAKE",
         (-1, -6),  # Location in the world
         [LEVEL_THREE_F]  # All layouts for that level
     ),
     (
-        "POND",
+        "LAKE",
         (-1, -5),  # Location in the world
         [LEVEL_THREE_G]  # All layouts for that level
     ),
     (
-        "POND",
+        "LAKE",
         (0, -5),  # Location in the world
         [LEVEL_THREE_H]  # All layouts for that level
     ),
     (
-        "POND ISLAND",
+        "LAKE ISLAND",
         (0, -6),  # Location in the world
         [LEVEL_THREE_I]  # All layouts for that level
     ),
