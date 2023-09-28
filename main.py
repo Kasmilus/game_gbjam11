@@ -45,7 +45,7 @@ def init():
     #game.game.objects_decor[-1].pos_y += HALF_GRID_CELL
     game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((3, 5), (3, 0)), text="ROLL WHEN HOOKED = ?"))
     game.game.objects_decor[-1].pos_y += HALF_GRID_CELL
-    game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((5, 5), (4, -1)), text="HOOK & ROLL ASIDE!"))
+    game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((1, 5), (4, -1)), text="HOOK ENEMIES & ROLL"))
     game.game.objects_decor[-1].pos_y += HALF_GRID_CELL
     game.game.objects_decor.append(Obj(ObjType.Text, (0, 0), get_pos_for_room((2, 1), (-1, -5)), text="THE END"))
     game.game.objects_decor[-1].pos_y += HALF_GRID_CELL
@@ -135,6 +135,8 @@ def update():
         #
         # Game Logic updates
         #
+        if game.game.ckpt_timer > -1:
+            game.game.ckpt_timer -= FRAME_TIME
         destroy_list = []
         for obj_idx, obj in enumerate(game.game.objects):
             if obj.is_pushable:
@@ -189,6 +191,8 @@ def update():
                         # Save game state
                         game_checkpoint = deepcopy(game.game)
                         resources.play_sound(resources.SOUND_CHECKPOINT)
+                        game.game.ckpt_timer = 1.0
+                        game.game.ckpt_pos = obj.get_pos_mid()
             elif obj.obj_type == ObjType.ParticleRun or obj.obj_type == ObjType.ParticleExplosion:
                 obj.particle_lifetime -= 1
                 if obj.particle_lifetime <= 1:
@@ -308,6 +312,12 @@ def draw():
                     bbox = obj.get_bbox_world_space()
                     pyxel.rectb(bbox[0], bbox[1], bbox[2]-bbox[0], bbox[3]-bbox[1], 15)
 
+        if game.game.ckpt_timer > 0:
+            x = interp.interp(game.game.camera_x-100, game.game.ckpt_pos[0], 1-game.game.ckpt_timer, 1, interp.EasingType.Slerp)
+            pyxel.text(x, game.game.ckpt_pos[1], "CHECKPOINT!", resources.COLOR_DARK)
+        elif game.game.ckpt_timer > -1:
+            x = interp.interp( game.game.camera_x + pyxel.width+50, game.game.ckpt_pos[0],  1+game.game.ckpt_timer, 1, interp.EasingType.EaseInOutQuint)
+            pyxel.text(x, game.game.ckpt_pos[1], "CHECKPOINT!", resources.COLOR_DARK)
 
         # Draw UI
         pos_x = game.game.camera_x

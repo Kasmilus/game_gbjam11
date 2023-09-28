@@ -15,8 +15,8 @@ class GameState(Enum):
 
 class Game:
     def __init__(self):
-        #self.game_state: GameState = GameState.Game
-        self.game_state: GameState = GameState.Splash
+        self.game_state: GameState = GameState.Game
+        #self.game_state: GameState = GameState.Splash
         self.all_objects: List[Obj] = []  # List of all objects in game
         self.objects: List[Obj] = []  # List of only objects in current and surrounding rooms
         self.objects_decor: List[Obj] = []
@@ -38,6 +38,9 @@ class Game:
 
         self.time_since_game_over: int = 0
         self.return_to_game: bool = False
+
+        self.ckpt_timer: float = -1
+        self.ckpt_pos = None
 
 
 def init_game():

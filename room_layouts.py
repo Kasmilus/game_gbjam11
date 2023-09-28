@@ -99,12 +99,12 @@ LEVEL_INTRO_G_SECRET = "0000000000\n" \
 
 
 # Intro - Pull Enemies to kill them
-LEVEL_INTRO_H = "1b00J0K0n2\n" \
-                "7Q[00[e#T8\n" \
-                "70]J0]0008\n" \
-                "7r000L0wK8\n" \
-                "1bfn555408\n" \
-                "7sLea00008\n" \
+LEVEL_INTRO_H = "1b[0J0K#n2\n" \
+                "7Q]r0[00K8\n" \
+                "7e0Jw]r008\n" \
+                "70000L00T8\n" \
+                "70n555bfn2\n" \
+                "700000aLs8\n" \
                 "366400n664"
 
 # Intro - some space before first main challenge
@@ -117,20 +117,20 @@ LEVEL_INTRO_I = "155b0Qn552\n" \
                 "3bL00000n4"
 
 # Level One - small labyrinth with simple enemies spread out
-LEVEL_ONE_A = "155b00n552\n" \
-              "7a000W0ws8\n" \
+LEVEL_ONE_A = "1554003552\n" \
+              "70w00W0ws8\n" \
               "700K000rq8\n" \
-              "z0W0L00q0c\n" \
+              "z0WaL00q0c\n" \
               "???>0<????\n" \
               "xK00000H0v\n" \
               "366b00n664"
 LEVEL_ONE_B = "1555555552\n" \
-              "z00000H0d8\n" \
-              "D00w0Y00T8\n" \
+              "zK00Y0H0d8\n" \
+              "D000w00#08\n" \
               "x00J000E08\n" \
-              "700e00#0K8\n" \
-              "7K0K000R08\n" \
-              "366b00n664"
+              "700e00q0K8\n" \
+              "7KTK000R08\n" \
+              "3662001664"
 LEVEL_ONE_C = "1555555552\n" \
               "7K0L0e0E0c\n" \
               "7[00W0H00K\n" \
@@ -139,11 +139,11 @@ LEVEL_ONE_C = "1555555552\n" \
               "7a00L00v08\n" \
               "3666b0n4K8"
 LEVEL_ONE_D = "1555b0nb08\n" \
-              "7dq00K<>08\n" \
+              "7d0q0K<>08\n" \
               "15555b0008\n" \
               "zK00HK000c\n" \
-              "D000T000<?\n" \
-              "x0E000H00v\n" \
+              "D0000000<?\n" \
+              "x0E0T0H00v\n" \
               "3666666664"
 
 # Level Two - Open sided meadows
@@ -163,10 +163,10 @@ LEVEL_TWO_B = "7QK00000e0\n" \
               "7d0Y00E000\n" \
               "6666666666"
 LEVEL_TWO_C = "15bfn55555\n" \
-              "7H0T0000G0\n" \
+              "7H0T00E0G0\n" \
               "7000K00[00\n" \
               "700KL00]K0\n" \
-              "700J00000q\n" \
+              "700J000000\n" \
               "70#000J000\n" \
               "70000000#0"
 LEVEL_TWO_D = "5555555552\n" \
@@ -181,9 +181,9 @@ LEVEL_TWO_D = "5555555552\n" \
 # Level Three - 9 rooms, main challange, 2 secrets in there
 LEVEL_THREE_A = "1555b0n552\n" \
                 "700L00H008\n" \
-                "zr000a0[08\n" \
+                "zr00000[08\n" \
                 "000[W00]J8\n" \
-                "xK0]000ty8\n" \
+                "xK0]00aty8\n" \
                 "7#0000Kui8\n" \
                 "36b0n66664"
 LEVEL_THREE_B = "1555b0n552\n" \
@@ -195,8 +195,8 @@ LEVEL_THREE_B = "1555b0n552\n" \
                 "3666b0n664"
 LEVEL_THREE_C = "1555555552\n" \
                 "Q00e0L0#08\n" \
-                "0w0000Y0d8\n" \
-                "00KH0[0Rw8\n" \
+                "0w000000d8\n" \
+                "00KH0[YRw8\n" \
                 "x0000]00#8\n" \
                 "700r00JH08\n" \
                 "3666b0n664"
@@ -220,10 +220,10 @@ LEVEL_THREE_F = "1552015552\n" \
                 "70G8T<????\n" \
                 "7L08015552\n" \
                 "7K0807KL08\n" \
-                "7668f36664"
+                "7008f36664"
 LEVEL_THREE_G = "15540n5552\n" \
-                "7#JH000e[8\n" \
-                "70[00#0Q]8\n" \
+                "7#0000He[8\n" \
+                "7J[00#0Q]8\n" \
                 "7[]r0W[0[8\n" \
                 "7]R0#0]q]8\n" \
                 "7w00000JL8\n" \

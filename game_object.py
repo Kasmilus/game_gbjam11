@@ -37,7 +37,7 @@ class Obj:
         self.pos_y = pos[1]
         self.last_move_dir = (1, 0)  # Always start facing right
         self.velocity = (0, 0)  # When launched by a hook
-        self.velocity_drag = 0.5
+        self.velocity_drag = 0.3
         self.hook_velocity = None  # hook only
         self.is_hookable = is_hookable
         self.is_hooked = False
@@ -85,15 +85,11 @@ class Obj:
         if obj_type == ObjType.EnemyFlying:
             self.draw_priority = 4
             self.bounding_box = (5, 4, GRID_CELL_SIZE-5, GRID_CELL_SIZE)
-            self.enemy_speed = 0.40
-            self.enemy_last_path_point = None
-            self.enemy_reached_last_pathpoint = True
+            self.enemy_speed = 0.30
         if obj_type == ObjType.EnemyWalking:
             self.draw_priority = 4
             self.bounding_box = (3, 3, GRID_CELL_SIZE-3, GRID_CELL_SIZE-1)
-            self.enemy_speed = 0.30
-            self.enemy_last_path_point = None
-            self.enemy_reached_last_pathpoint = True
+            self.enemy_speed = 0.27
 
         if obj_type == ObjType.Decor:
             self.collides = False

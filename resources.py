@@ -88,7 +88,7 @@ ALL_OBJECTS = {
     'RIVER_CORNER_L': {'name': 'Water', "sprite": (14, 9), "obj_type": ObjType.Water},
     'RIVER_CORNER_R': {'name': 'Water', "sprite": (15, 9), "obj_type": ObjType.Water},
 
-    'ENEMY_WALKING': {'name': 'Enemy Walking', 'sprite': SPRITE_ENEMY_WALKING_IDLE, "obj_type": ObjType.EnemyWalking, "is_hookable": False},
+    'ENEMY_WALKING': {'name': 'Enemy Walking', 'sprite': SPRITE_ENEMY_WALKING_IDLE, "obj_type": ObjType.EnemyWalking, "is_hookable": True},
     'ENEMY_FLYING': {'name': 'Enemy Flying', 'sprite': SPRITE_ENEMY_FLYING_IDLE, "obj_type": ObjType.EnemyFlying, "is_hookable": True},
 
     'STONE_A': {'name': 'Stone', 'sprite': (0, 5), 'obj_type': ObjType.World, 'is_hookable': True, 'bounding_box': (1, 1, GRID_CELL_SIZE-1, GRID_CELL_SIZE-1)},

@@ -75,6 +75,16 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
         move_dir[0] -= obj.player_speed
     elif Controls.right():
         move_dir[0] += obj.player_speed
+
+    # Update move dir BEFORE collision checks
+    if move_dir[0] != 0 or move_dir[1] != 0:
+        if move_dir[0] != 0 and move_dir[1] != 0:
+            obj.last_move_dir = move_dir[0], 0
+        else:
+            obj.last_move_dir = move_dir
+        if move_dir[0] != 0:
+            obj.last_facing_dir_anim = move_dir[0]
+
     # Check if movement would result in collision
     for obj2 in game.game.objects:
         if obj2 is not obj and obj2.obj_type is not ObjType.PlayerHook:
@@ -86,15 +96,9 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
     # Update position
     obj.pos_x += move_dir[0]
     obj.pos_y += move_dir[1]
-    if move_dir != (0, 0):
-        if move_dir[0] != 0 and move_dir[1] != 0:
-            obj.last_move_dir = move_dir[0], 0
-        else:
-            obj.last_move_dir = move_dir
-        if move_dir[0] != 0:
-            obj.last_facing_dir_anim = move_dir[0]
 
-        # Running particle
+    # Running particle
+    if move_dir != (0, 0):
         if (Controls.left(one=True) or Controls.right(one=True)) and obj.player_particle_count < 2:
             run_particle = Obj(pos=obj.get_pos(), **resources.ALL_OBJECTS['PARTICLE_RUN'])
             if obj.last_facing_dir_anim < 0:
@@ -110,7 +114,7 @@ def update_player(obj: Obj, destroy_list: List[Obj]) -> None:
             hook_pos = (obj.pos_x + obj.last_move_dir[0] * start_pos_offset, obj.pos_y + obj.last_move_dir[1] * start_pos_offset)
             hook = Obj(**resources.ALL_OBJECTS['HOOK'], pos=hook_pos)
             hook.hook_velocity = (obj.last_move_dir[0] * obj.player_hook_speed, obj.last_move_dir[1] * obj.player_hook_speed)
-            hook.hook_move_back_speed = obj.player_hook_speed*0.62
+            hook.hook_move_back_speed = obj.player_hook_speed*0.45
             game.game.objects.append(hook)
             resources.play_sound(resources.SOUND_HOOK_THROW)
 
